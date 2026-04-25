@@ -14,14 +14,18 @@ import {
   Mail,
   Eye,
   EyeOff,
-  TrendingUp,
-  Briefcase,
+  BriefcaseBusiness,
   User,
   Phone,
   FileText,
   UserCircle,
-  ChevronDown,
-  ChevronUp,
+  MapPin,
+  GraduationCap,
+  Car,
+  ShieldCheck,
+  Briefcase,
+  BookOpen,
+  Tag
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -32,22 +36,41 @@ const RegisterPage = () => {
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [bio, setBio] = useState("");
-  const [resume, setResume] = useState<File | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
-  const [showJobseekerFields, setShowJobseekerFields] = useState(false);
+
+  // Common Fields
+  const [wilaya, setWilaya] = useState("");
+  const [moatmadia, setMoatmadia] = useState("");
+  const [specialty, setSpecialty] = useState(""); 
+
+  // JobSeeker Specific
+  const [educationType, setEducationType] = useState(""); 
+  const [hasPermis, setHasPermis] = useState<string>("");
+  const [permisType, setPermisType] = useState("");
+  const [bio, setBio] = useState("");
+  const [resume, setResume] = useState<File | null>(null);
 
   const { isAuth, setUser, loading, setIsAuth } = useAppData();
-  if (loading) {
-    return <Loading />;
-  }
+
+  if (loading) return <Loading />;
   if (isAuth) return redirect("/");
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!role) return toast.error("بالله اختار صفتك");
+    
+    // Validation: Phone Number must be 8 digits (Tunisian format)
+    if (phoneNumber.length !== 8) {
+      return toast.error("رقم الهاتف لازم يكون فيه 8 أرقام");
+    }
+
+    if (role === "jobseeker" && educationType === "fac" && !resume) {
+      return toast.error("بما أنك قاري في الجامعة، الـ CV إجباري");
+    }
+
     setBtnLoading(true);
     const formData = new FormData();
     formData.append("role", role);
@@ -55,350 +78,192 @@ const RegisterPage = () => {
     formData.append("email", email);
     formData.append("password", password);
     formData.append("phoneNumber", phoneNumber);
+    formData.append("wilaya", wilaya);
+    formData.append("moatmadia", moatmadia);
+    formData.append("specialty", specialty);
+
     if (role === "jobseeker") {
+      formData.append("educationType", educationType);
+      formData.append("hasPermis", hasPermis);
+      formData.append("permisType", permisType);
       formData.append("bio", bio);
-      if (resume) {
-        formData.append("file", resume);
-      }
+      if (resume) formData.append("file", resume);
     }
+
     try {
-      const { data } = await axios.post(
-        `${auth_service_url}/api/auth/register`,
-        formData,
-      );
-
-      toast.success(data.message);
-
-      Cookies.set("token", data.token, {
-        expires: 15,
-        secure: false,
-        path: "/",
-      });
+      const { data } = await axios.post(`${auth_service_url}/api/auth/register`, formData);
+      toast.success("تم إنشاء الحساب بنجاح!");
+      Cookies.set("token", data.token, { expires: 15, secure: false, path: "/" });
       setUser(data.registeredUser);
       setIsAuth(true);
     } catch (error: any) {
-      toast.error(error.response.data.message);
-      setIsAuth(false);
+      toast.error(error.response?.data?.message || "ثبت في معطياتك");
     } finally {
       setBtnLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-white dark:bg-slate-950">
-      {/* Background Elements */}
-      <div className="fixed inset-0 bg-linear-to-br from-blue-50/50 via-white to-purple-50/50 dark:from-slate-900 dark:via-slate-950 dark:to-purple-950/20 -z-10" />
-      <div className="fixed inset-0 overflow-hidden -z-10">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20 dark:bg-blue-900/10 dark:opacity-20" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-100 rounded-full blur-3xl opacity-20 dark:bg-purple-900/10 dark:opacity-20" />
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#FDFDFD] dark:bg-slate-950 relative overflow-hidden" dir="rtl">
+      
+      {/* Background Decor */}
+      <div className="absolute inset-0 z-0 opacity-50">
+        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-100 dark:bg-blue-900/10 blur-3xl rounded-full" />
+        <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-purple-100 dark:bg-purple-900/10 blur-3xl rounded-full" />
       </div>
 
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2 mb-2">
-            <div className="p-2 bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 rounded-lg">
-              <TrendingUp size={20} className="text-white" />
+      <div className="w-full max-w-2xl relative z-10">
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 mb-4 group">
+            <div className="p-2.5 bg-blue-600 rounded-xl shadow-lg transition-transform group-hover:scale-110">
+              <BriefcaseBusiness size={24} className="text-white" />
             </div>
-            <span className="text-xl font-bold bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-              Jobvyn
-            </span>
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-            Create Account
-          </h1>
-          <p className="text-sm text-gray-600 dark:text-slate-400 mt-1">
-            Join thousands finding their perfect opportunities
-          </p>
+            <span className="text-2xl font-black text-slate-900 dark:text-white">خدّمن<span className="text-blue-600">ي</span></span>
+          </Link>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white">أعمل حساب جديد</h1>
         </div>
 
-        {/* Registration Card */}
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-linear-to-r from-blue-600/10 to-purple-600/10 dark:from-blue-400/5 dark:to-purple-400/5 rounded-2xl blur opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
-
-          <div className="relative bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-slate-800 shadow-lg">
-            <form onSubmit={submitHandler} className="space-y-4">
-              {/* Role Selection */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700 dark:text-slate-300">
-                  I want to join as *
-                </Label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setRole("jobseeker")}
-                    className={`p-3 rounded-lg border transition-all duration-200 ${
-                      role === "jobseeker"
-                        ? "border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20"
-                        : "border-gray-300 dark:border-slate-700 hover:border-gray-400 dark:hover:border-slate-600"
-                    }`}
-                  >
-                    <div className="flex flex-col items-center gap-1">
-                      <User
-                        className={`h-4 w-4 ${role === "jobseeker" ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-slate-500"}`}
-                      />
-                      <span
-                        className={`text-xs font-medium ${role === "jobseeker" ? "text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-slate-300"}`}
-                      >
-                        Job Seeker
-                      </span>
-                    </div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setRole("recruiter")}
-                    className={`p-3 rounded-lg border transition-all duration-200 ${
-                      role === "recruiter"
-                        ? "border-purple-500 dark:border-purple-400 bg-purple-50 dark:bg-purple-900/20"
-                        : "border-gray-300 dark:border-slate-700 hover:border-gray-400 dark:hover:border-slate-600"
-                    }`}
-                  >
-                    <div className="flex flex-col items-center gap-1">
-                      <Briefcase
-                        className={`h-4 w-4 ${role === "recruiter" ? "text-purple-600 dark:text-purple-400" : "text-gray-400 dark:text-slate-500"}`}
-                      />
-                      <span
-                        className={`text-xs font-medium ${role === "recruiter" ? "text-purple-700 dark:text-purple-300" : "text-gray-700 dark:text-slate-300"}`}
-                      >
-                        Recruiter
-                      </span>
-                    </div>
-                  </button>
-                </div>
+        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 sm:p-10 shadow-2xl border border-slate-100 dark:border-slate-800">
+          <form onSubmit={submitHandler} className="space-y-6">
+            
+            <div className="space-y-3">
+              <Label className="text-sm font-bold text-slate-700 dark:text-slate-300 pr-1">بصفتك: *</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <button type="button" onClick={() => setRole("jobseeker")} className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${role === "jobseeker" ? "border-blue-600 bg-blue-50/50" : "border-slate-100 dark:border-slate-800"}`}>
+                  <User size={24} className={role === "jobseeker" ? "text-blue-600" : "text-slate-400"} />
+                  <span className="text-sm font-bold">نلوّج على خدمة</span>
+                </button>
+                <button type="button" onClick={() => setRole("recruiter")} className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${role === "recruiter" ? "border-blue-600 bg-blue-50/50" : "border-slate-100 dark:border-slate-800"}`}>
+                  <Briefcase size={24} className={role === "recruiter" ? "text-blue-600" : "text-slate-400"} />
+                  <span className="text-sm font-bold">صاحب مؤسسة</span>
+                </button>
               </div>
+            </div>
 
-              {role && (
-                <div className="space-y-3 animate-in fade-in duration-200">
-                  {/* Name & Email Row */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="name"
-                        className="text-xs font-medium text-gray-700 dark:text-slate-300"
-                      >
-                        Full Name *
-                      </Label>
-                      <div className="relative">
-                        <User className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-slate-500" />
-                        <Input
-                          id="name"
-                          type="text"
-                          placeholder="John Doe"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          required
-                          className="pl-8 h-9 text-sm bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20"
+            {role && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-slate-600">{role === "jobseeker" ? "الإسم واللقب *" : "إسم الشركة / صاحب العمل *"}</Label>
+                    <div className="relative"><User className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" /><Input value={name} onChange={(e) => setName(e.target.value)} required className="pr-10 h-12 bg-slate-50 border-slate-200 rounded-xl" /></div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-slate-600">رقم الهاتف *</Label>
+                    <div className="relative">
+                        <Phone className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        {/* Modified: Type Number + pattern for better validation */}
+                        <Input 
+                            type="number" 
+                            value={phoneNumber} 
+                            onChange={(e) => setPhoneNumber(e.target.value)} 
+                            required 
+                            placeholder="مثلا: 22111333"
+                            className="pr-10 h-12 bg-slate-50 border-slate-200 rounded-xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
                         />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="email"
-                        className="text-xs font-medium text-gray-700 dark:text-slate-300"
-                      >
-                        Email *
-                      </Label>
-                      <div className="relative">
-                        <Mail className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-slate-500" />
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="you@example.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                          className="pl-8 h-9 text-sm bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20"
-                        />
-                      </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Phone & Password Row */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="phoneNumber"
-                        className="text-xs font-medium text-gray-700 dark:text-slate-300"
-                      >
-                        Phone *
-                      </Label>
-                      <div className="relative">
-                        <Phone className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-slate-500" />
-                        <Input
-                          id="phoneNumber"
-                          type="tel"
-                          placeholder="+91 9876543210"
-                          value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
-                          required
-                          className="pl-8 h-9 text-sm bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20"
-                        />
-                      </div>
-                    </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-600">{role === "jobseeker" ? "الاختصاص متاعك *" : "اختصاص الشركة / مجال النشاط *"}</Label>
+                  <div className="relative">
+                    <Tag className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input placeholder={role === "jobseeker" ? "مثلا: نجار، مطور ويب..." : "مثلا: بناء، إعلامية..."} value={specialty} onChange={(e) => setSpecialty(e.target.value)} required className="pr-10 h-12 bg-slate-50 border-slate-200 rounded-xl" />
+                  </div>
+                </div>
 
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="password"
-                        className="text-xs font-medium text-gray-700 dark:text-slate-300"
-                      >
-                        Password *
-                      </Label>
-                      <div className="relative">
-                        <Lock className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-slate-500" />
-                        <Input
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                          className="pl-8 pr-8 h-9 text-sm bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute cursor-pointer right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300"
-                        >
-                          {showPassword ? (
-                            <Eye size={16} />
-                          ) : (
-                            <EyeOff size={16} />
-                          )}
-                        </button>
-                      </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-slate-600">الولاية *</Label>
+                    <div className="relative"><MapPin className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" /><Input placeholder="الولاية" value={wilaya} onChange={(e) => setWilaya(e.target.value)} required className="pr-10 h-12 bg-slate-50 border-slate-200 rounded-xl" /></div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-slate-600">المعتمدية *</Label>
+                    <div className="relative"><MapPin className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" /><Input placeholder="المعتمدية" value={moatmadia} onChange={(e) => setMoatmadia(e.target.value)} required className="pr-10 h-12 bg-slate-50 border-slate-200 rounded-xl" /></div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-slate-600">الإيميل *</Label>
+                    <div className="relative"><Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" /><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="pr-10 h-12 bg-slate-50 border-slate-200 rounded-xl" /></div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-slate-600">كلمة السر *</Label>
+                    <div className="relative">
+                      <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required className="pr-10 pl-10 h-12 bg-slate-50 border-slate-200 rounded-xl" />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">{showPassword ? <Eye size={18} /> : <EyeOff size={18} />}</button>
                     </div>
                   </div>
+                </div>
 
-                  {/* Job Seeker Additional Fields - Collapsible */}
-                  {role === "jobseeker" && (
-                    <div className="pt-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowJobseekerFields(!showJobseekerFields)
-                        }
-                        className=" cursor-pointer flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mb-2"
-                      >
-                        {showJobseekerFields ? (
-                          <ChevronUp size={16} />
-                        ) : (
-                          <ChevronDown size={16} />
-                        )}
-                        <span>Additional details for job seekers</span>
-                      </button>
-
-                      {showJobseekerFields && (
-                        <div className="space-y-3 animate-in fade-in duration-200">
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="bio"
-                              className="text-xs font-medium text-gray-700 dark:text-slate-300"
-                            >
-                              Bio *
-                            </Label>
-                            <div className="relative">
-                              <UserCircle className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400 dark:text-slate-500" />
-                              <textarea
-                                id="bio"
-                                placeholder="Brief about yourself..."
-                                value={bio}
-                                onChange={(e) => setBio(e.target.value)}
-                                required
-                                rows={2}
-                                className="w-full pl-8 pr-3 py-1.5 text-sm bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-md focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 resize-none"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="resume"
-                              className="text-xs font-medium text-gray-700 dark:text-slate-300"
-                            >
-                              Resume (PDF) *
-                            </Label>
-                            <div className="relative">
-                              <FileText className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-slate-500" />
-                              <Input
-                                id="resume"
-                                type="file"
-                                accept=".pdf"
-                                onChange={(e) => {
-                                  if (e.target.files && e.target.files[0]) {
-                                    setResume(e.target.files[0]);
-                                  }
-                                }}
-                                required
-                                className="pl-8 py-1.5 text-sm bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 file:mr-2 file:py-0.5 file:px-2 file:border-0 file:text-xs file:bg-blue-50 file:text-blue-600 dark:file:bg-blue-900/30 dark:file:text-blue-400 file:rounded"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                {role === "jobseeker" && (
+                  <div className="pt-4 border-t border-slate-100 space-y-6">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-bold flex items-center gap-2"><BookOpen size={18} className="text-blue-600" /> المستوى الدراسي / التكويني:</Label>
+                      <div className="grid grid-cols-3 gap-3">
+                        {[
+                          { id: "fac", label: "جامعي (Fac)" },
+                          { id: "formation", label: "تكوين (Formation)" },
+                          { id: "none", label: "آخر / بدون" }
+                        ].map((opt) => (
+                          <label key={opt.id} className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 cursor-pointer transition-all ${educationType === opt.id ? "border-blue-600 bg-blue-50" : "border-slate-100"}`}>
+                            <input type="radio" className="hidden" name="edu" value={opt.id} onChange={(e) => setEducationType(e.target.value)} />
+                            <span className="text-[11px] font-bold">{opt.label}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
-                  )}
 
-                  {/* Submit Button */}
-                  <Button
-                    type="submit"
-                    disabled={btnLoading}
-                    className="w-full h-10 cursor-pointer gap-2 group bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-4 text-sm"
-                  >
-                    {btnLoading ? (
-                      <>
-                        <Loader size={16} className="animate-spin" />
-                        Creating account...
-                      </>
-                    ) : (
-                      <>
-                        <span>Create Account</span>
-                        <ArrowRight
-                          size={16}
-                          className="group-hover:translate-x-1 transition-transform duration-200"
-                        />
-                      </>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-bold flex items-center gap-2"><Car size={18} className="text-blue-600" /> عندك رخصة سياقة؟</Label>
+                      <div className="flex gap-4">
+                        {["yes", "no"].map((opt) => (
+                          <label key={opt} className={`flex-1 flex items-center justify-center p-3 rounded-xl border-2 cursor-pointer transition-all ${hasPermis === opt ? "border-blue-600 bg-blue-50" : "border-slate-100"}`}>
+                            <input type="radio" className="hidden" name="permis" value={opt} onChange={(e) => setHasPermis(e.target.value)} />
+                            <span className="text-sm font-bold">{opt === "yes" ? "نعم" : "لا"}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {hasPermis === "yes" && (
+                      <Input placeholder="أذكر صنف رخصة السياقة" value={permisType} onChange={(e) => setPermisType(e.target.value)} className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
                     )}
-                  </Button>
-                </div>
-              )}
 
-              {/* Login Link */}
-              {role && (
-                <div className="pt-3 text-center border-t border-gray-200 dark:border-slate-800 mt-4">
-                  <p className="text-xs text-gray-600 dark:text-slate-400">
-                    Already have an account?{" "}
-                    <Link
-                      href="/login"
-                      className="text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 hover:underline"
-                    >
-                      Sign in
-                    </Link>
-                  </p>
-                </div>
-              )}
-            </form>
-          </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-slate-600 mr-1">تعريف قصير (Bio) *</Label>
+                      <textarea value={bio} onChange={(e) => setBio(e.target.value)} required rows={3} placeholder="أحكيلنا على خبراتك..." className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none text-right resize-none" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-slate-600">
+                        تحميل السيرة الذاتية (PDF) {educationType === "fac" ? " * (إجباري)" : "(اختياري)"}
+                      </Label>
+                      <div className="relative">
+                        <FileText className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Input type="file" accept=".pdf" onChange={(e) => e.target.files && setResume(e.target.files[0])} required={educationType === "fac"} className="pr-10 py-2 h-12 bg-slate-50 border-slate-200 rounded-xl file:bg-blue-600 file:text-white file:border-0 file:rounded-lg file:px-3 file:ml-4 file:text-xs file:font-bold cursor-pointer" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <Button type="submit" disabled={btnLoading} className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-xl shadow-blue-200 font-bold text-lg transition-all active:scale-95 gap-3 mt-4">
+                  {btnLoading ? <><Loader size={20} className="animate-spin" /> لحظة... </> : <><span className="text-xl">إنشاء الحساب</span> <ArrowRight size={20} className="rotate-180" /></>}
+                </Button>
+              </div>
+            )}
+
+            <div className="pt-6 text-center border-t border-slate-50">
+              <p className="text-sm text-slate-500 font-medium">عندك حساب ديجا؟ <Link href="/login" className="text-blue-600 font-black hover:underline underline-offset-4">سجل دخولك توّة</Link></p>
+            </div>
+          </form>
         </div>
 
-        {/* Footer */}
-        <div className="mt-4 text-center">
-          <p className="text-xs text-gray-500 dark:text-slate-500">
-            By creating an account, you agree to our{" "}
-            <Link
-              href="/terms"
-              className="text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              Terms
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/privacy"
-              className="text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              Privacy Policy
-            </Link>
-          </p>
+        <div className="mt-8 flex items-center justify-center gap-2 text-slate-400">
+          <ShieldCheck size={16} />
+          <span className="text-xs font-medium">معطياتك الشخصية محمية وآمنة 100%</span>
         </div>
       </div>
     </div>

@@ -14,7 +14,9 @@ import {
   Mail,
   Eye,
   EyeOff,
-  TrendingUp,
+  BriefcaseBusiness,
+  ShieldCheck,
+  Users,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -27,11 +29,12 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
 
-  const { isAuth, setUser, loading, setIsAuth, fetchApplication } =
-    useAppData();
+  const { isAuth, setUser, loading, setIsAuth, fetchApplication } = useAppData();
+
   if (loading) {
     return <Loading />;
   }
+  
   if (isAuth) return redirect("/");
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -43,18 +46,18 @@ const LoginPage = () => {
         password,
       });
 
-      toast.success(data.message);
+      toast.success("مرحباً بك مجدداً!");
 
       Cookies.set("token", data.token, {
         expires: 15,
-        secure: false, //turned secure to false due to aws deplyment
+        secure: false, 
         path: "/",
       });
       setUser(data.userObject);
       setIsAuth(true);
       fetchApplication();
     } catch (error: any) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "ثبت في الإيميل أو كلمة السر");
       setIsAuth(false);
     } finally {
       setBtnLoading(false);
@@ -62,158 +65,137 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-white dark:bg-slate-950">
-      {/* Background gradient */}
-      <div className="fixed inset-0 bg-linear-to-br from-blue-50/50 via-white to-purple-50/50 dark:from-slate-900 dark:via-slate-950 dark:to-purple-950/20 -z-10" />
-
-      {/* Abstract background elements */}
-      <div className="fixed inset-0 overflow-hidden -z-10">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-20 dark:bg-blue-900/10 dark:opacity-20" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-100 rounded-full blur-3xl opacity-20 dark:bg-purple-900/10 dark:opacity-20" />
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#FDFDFD] dark:bg-slate-950 relative overflow-hidden" dir="rtl">
+      
+      {/* Background Decor */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-blue-50/50 dark:bg-blue-900/10 blur-3xl rounded-full" />
+        <div className="absolute bottom-0 right-0 w-1/3 h-1/3 bg-indigo-50/50 dark:bg-indigo-900/10 blur-3xl rounded-full" />
       </div>
 
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="p-2 bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 rounded-lg">
-              <TrendingUp size={24} className="text-white" />
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo & Header */}
+        <div className="text-center mb-10">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
+            <div className="p-3 bg-blue-600 rounded-2xl shadow-xl shadow-blue-200 dark:shadow-none group-hover:scale-110 transition-transform">
+              <BriefcaseBusiness size={28} className="text-white" />
             </div>
-            <span className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-              Jobvyn
+            <span className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white">
+              خدّمن<span className="text-blue-600">ي</span>
             </span>
-          </div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-            Welcome back
+          </Link>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-3">
+            مرحباً بيك من جديد
           </h1>
-          <p className="text-gray-600 dark:text-slate-300">
-            Sign in to continue your journey
+          <p className="text-slate-500 dark:text-slate-400 font-medium">
+            سجّل دخولك باش تكمل تلوّج على فرصتك
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="relative group">
-          {/* Glow effect */}
-          <div className="absolute -inset-0.5 bg-linear-to-r from-blue-600/10 to-purple-600/10 dark:from-blue-400/5 dark:to-purple-400/5 rounded-2xl blur opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
-
-          <div className="relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-gray-200/50 dark:border-slate-700/50 shadow-lg">
-            <form onSubmit={submitHandler} className="space-y-5">
-              {/* Email Input */}
-              <div className="space-y-2">
-                <Label
-                  htmlFor="email"
-                  className="text-sm font-medium text-gray-700 dark:text-slate-300"
-                >
-                  Email Address
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-slate-500" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="pl-10 h-11 bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-colors"
-                  />
-                </div>
+        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800">
+          <form onSubmit={submitHandler} className="space-y-6">
+            
+            {/* Email */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-bold text-slate-700 dark:text-slate-300 pr-1">
+                البريد الإلكتروني
+              </Label>
+              <div className="relative">
+                <Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="pr-10 h-13 bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 transition-all rounded-2xl text-right"
+                />
               </div>
-
-              {/* Password Input */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label
-                    htmlFor="password"
-                    className="text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    Password
-                  </Label>
-                  <Link
-                    href="/forgot"
-                    className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-slate-500" />
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="pl-10 pr-10 h-11 bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
-                  >
-                    {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={btnLoading}
-                size="lg"
-                className="w-full h-11 cursor-pointer gap-2 group bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {btnLoading ? (
-                  <>
-                    <Loader size={18} className="animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <span>Sign In</span>
-                    <ArrowRight
-                      size={18}
-                      className="group-hover:translate-x-1 transition-transform duration-200"
-                    />
-                  </>
-                )}
-              </Button>
-            </form>
-
-            {/* Sign Up Link */}
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
-              <p className="text-center text-sm text-gray-600 dark:text-slate-400">
-                Don&apos;t have an account?{" "}
-                <Link
-                  href="/register"
-                  className="text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
-                >
-                  Sign up now
-                </Link>
-              </p>
             </div>
+
+            {/* Password */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <Label htmlFor="password" className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                  كلمة السر
+                </Label>
+                <Link href="/forgot" className="text-xs text-blue-600 hover:underline font-bold">
+                  نسيت كلمة السر؟
+                </Link>
+              </div>
+              <div className="relative">
+                <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="pr-10 pl-10 h-13 bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500/20 transition-all rounded-2xl text-right"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors"
+                >
+                  {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <Button
+              type="submit"
+              disabled={btnLoading}
+              className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-lg shadow-blue-200 dark:shadow-none font-bold text-lg transition-all active:scale-[0.98] gap-3"
+            >
+              {btnLoading ? (
+                <>
+                  <Loader size={20} className="animate-spin" />
+                  لحظة بركة...
+                </>
+              ) : (
+                <>
+                  <span>دخول</span>
+                  <ArrowRight size={20} className="rotate-180" />
+                </>
+              )}
+            </Button>
+          </form>
+
+          {/* Divider */}
+          <div className="relative my-8 text-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-100 dark:border-slate-800"></div>
+            </div>
+            <span className="relative bg-white dark:bg-slate-900 px-4 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+              مازلت ما سجلتش؟
+            </span>
           </div>
+
+          {/* Register Link - Enhanced Style */}
+          <Link 
+            href="/register" 
+            className="w-full h-14 flex items-center justify-center relative group overflow-hidden rounded-2xl transition-all"
+          >
+            <div className="absolute inset-0 border-2 border-blue-600/20 dark:border-blue-400/20 group-hover:border-blue-600 dark:group-hover:border-blue-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/10 transition-all rounded-2xl" />
+            
+            <div className="relative flex items-center gap-3">
+              <span className="text-blue-600 dark:text-blue-400 font-black text-lg tracking-tight group-hover:translate-x-1 transition-transform">
+                حل حساب جديد توّة
+              </span>
+              <Users size={20} className="text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform" />
+            </div>
+          </Link>
         </div>
 
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <p className="text-xs text-gray-500 dark:text-slate-500">
-            By signing in, you agree to our{" "}
-            <Link
-              href="/terms"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Terms
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/privacy"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Privacy Policy
-            </Link>
-          </p>
+        {/* Footer Trust */}
+        <div className="mt-8 flex items-center justify-center gap-2 text-slate-400">
+          <ShieldCheck size={16} />
+          <span className="text-xs font-medium">معطياتك الشخصية آمنة 100%</span>
         </div>
       </div>
     </div>

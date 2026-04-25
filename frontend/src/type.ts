@@ -36,12 +36,14 @@ export interface ScoreBreakdown {
   structure: { score: number; feedback: string };
   readability: { score: number; feedback: string };
 }
+
 export interface Suggestion {
   category: string;
   issue: string;
   recommendation: string;
   priority: "high" | "medium" | "low";
 }
+
 export interface ResumeAnalysisResponse {
   atsScore: number;
   scoreBreakdown: ScoreBreakdown;
@@ -50,7 +52,7 @@ export interface ResumeAnalysisResponse {
   summary: string;
 }
 
-// ..MAIN AUTH states types.....//
+// -- User Interface المصلحة --
 export interface User {
   user_id: number;
   name: string;
@@ -62,8 +64,15 @@ export interface User {
   resume_public_id: string | null;
   profile_pic: string | null;
   profile_pic_public_id: string | null;
-  skills: string[];
   subscription: string | null;
+  // زدنا الحقول هذي باش يتنحو الـ Red Lines في Info.tsx
+  wilaya?: string | null;
+  moatmadia?: string | null;
+  specialty?: string | null;
+  education_type?: string | null;
+  has_permis?: boolean;
+  permis_type?: string | null;
+  skills?: string[];
 }
 
 export interface AppContextType {
@@ -75,26 +84,19 @@ export interface AppContextType {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAuth: React.Dispatch<React.SetStateAction<boolean>>;
   logoutUser: () => Promise<void>;
-  addSkill: (
-    skill: string,
-    setSkill: React.Dispatch<React.SetStateAction<string>>,
-  ) => Promise<void>;
+  // updateUser توة تقبل payload (Object) باش تبعث كل الحقول ضربة وحدة
+  updateUser: (payload: any) => Promise<boolean>; 
+  updateProfilePic: (formData: any) => Promise<void>;
+  updateResume: (formData: any) => Promise<void>;
+  addSkill: (skill: string, setSkill: React.Dispatch<React.SetStateAction<string>>) => Promise<void>;
   removeSkill: (skill: string) => Promise<void>;
   applyJob: (job_id: number) => Promise<void>;
-  updateProfilePic: (fromData: any) => Promise<void>;
-  updateResume: (FormData: any) => Promise<void>;
-  updateUser: (name: string, phoneNumber: string, bio: string) => Promise<void>;
   application: Application[] | null;
   fetchApplication: () => Promise<void>;
 }
 
 export interface AppProviderProps {
   children: ReactNode;
-}
-
-export interface AccountProps {
-  user: User | null;
-  isYourAccount: boolean;
 }
 
 export interface jobs {
@@ -114,6 +116,7 @@ export interface jobs {
   created_at: string;
   is_active: boolean;
 }
+
 export interface Company {
   company_id: string;
   name: string;
@@ -139,4 +142,8 @@ export interface Application {
   job_title: string;
   job_salary: number;
   job_location: string;
+}
+export interface AccountProps {
+  isYourAccount: boolean;
+  user: User | null; // أو أي اسم عندك للـ User Interface
 }

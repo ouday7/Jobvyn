@@ -1,39 +1,57 @@
 import React from "react";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, Briefcase } from "lucide-react";
 
 const Loading = () => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm z-50">
-      <div className="flex flex-col items-center justify-center gap-4">
-        {/* Gradient spinner */}
-        <div className="relative w-16 h-16">
-          <div className="absolute inset-0 border-4 border-blue-200/50 dark:border-blue-900/30 rounded-full"></div>
-          <div className="absolute inset-0 border-4 border-transparent border-t-blue-600 border-r-purple-600 border-b-blue-600 border-l-purple-600 rounded-full animate-spin"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="p-2 bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 rounded-lg">
-              <TrendingUp size={20} className="text-white" />
+    <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-slate-950 z-[9999]">
+      <div className="flex flex-col items-center justify-center gap-6">
+        
+        {/* Animated Khademni Icon Container */}
+        <div className="relative flex items-center justify-center">
+          {/* Outer Pulse Rings */}
+          <div className="absolute w-24 h-24 bg-blue-500/20 rounded-full animate-ping"></div>
+          <div className="absolute w-20 h-20 bg-blue-600/10 rounded-full animate-pulse delay-75"></div>
+          
+          {/* Main Spinner */}
+          <div className="relative w-16 h-16">
+            <div className="absolute inset-0 border-t-4 border-r-4 border-blue-600 border-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-2 border-b-4 border-l-4 border-slate-200 dark:border-slate-800 border-transparent rounded-full animate-spin [animation-duration:1.5s]"></div>
+            
+            {/* Center Icon */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="p-2.5 bg-blue-600 rounded-xl shadow-lg shadow-blue-500/30">
+                <Briefcase size={22} className="text-white animate-bounce" />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Text with animated dots */}
-        <div className="flex items-center gap-2">
-          <span className="text-gray-700 dark:text-slate-300 font-medium">
-            Loading
-          </span>
-          <div className="flex gap-1">
-            <div className="w-1.5 h-1.5 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse" />
-            <div
-              className="w-1.5 h-1.5 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse"
-              style={{ animationDelay: "0.2s" }}
-            />
-            <div
-              className="w-1.5 h-1.5 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse"
-              style={{ animationDelay: "0.4s" }}
-            />
+        {/* Brand Text & Progress */}
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Khademni<span className="text-blue-600">.</span>
+            </span>
           </div>
+          
+          {/* Subtle Progress Bar */}
+          <div className="w-40 h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-600 rounded-full animate-[loading-bar_1.5s_infinite_ease-in-out]"></div>
+          </div>
+          
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400 animate-pulse">
+            Searching for opportunities...
+          </p>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes loading-bar {
+          0% { transform: translateX(-100%); }
+          50% { transform: translateX(0%); }
+          100% { transform: translateX(100%); }
+        }
+      `}</style>
     </div>
   );
 };

@@ -10,7 +10,7 @@ import {
   Building2,
   CheckCircle2,
   MapPin,
-  IndianRupee,
+  Banknote,
   Clock,
   Zap,
 } from "lucide-react";
@@ -27,7 +27,6 @@ const JobsCard: React.FC<JobCardProps> = ({ job }) => {
   const [isApplied, setIsApplied] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
 
-  // Check if user has already applied
   useEffect(() => {
     if (application && job.job_id && Array.isArray(application)) {
       const hasApplied = application.some(
@@ -39,7 +38,6 @@ const JobsCard: React.FC<JobCardProps> = ({ job }) => {
 
   const handleApply = async () => {
     if (isApplied || isApplying) return;
-
     setIsApplying(true);
     try {
       await applyJob(job.job_id);
@@ -51,139 +49,118 @@ const JobsCard: React.FC<JobCardProps> = ({ job }) => {
     }
   };
 
-  const formatSalary = (salary: number | null | undefined) => {
-    if (!salary) return "Competitive";
-    if (salary >= 1000000) {
-      return `₹${(salary / 1000000).toFixed(1)}L PA`;
-    }
-    if (salary >= 1000) {
-      return `₹${(salary / 1000).toFixed(0)}K PA`;
-    }
-    return `₹${salary} PA`;
+  const formatSalary = (salary: any) => {
+    if (!salary) return "Salary Negotiable";
+    return `${salary} TND / Month`; // Baddelt-ha l-TND kima t-ji f-Khademni
   };
 
   const isPositionClosed = job.is_active === false;
   const isRemote = job.location?.toLowerCase().includes("remote");
 
-  // Get short description (1-2 lines max)
-  const getShortDescription = () => {
-    if (!job.description) return "Exciting opportunity with a growing team.";
-
-    const words = job.description.split(" ");
-    if (words.length <= 15) return job.description;
-
-    return words.slice(0, 15).join(" ") + "...";
-  };
-
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 border hover:border-gray-300 dark:hover:border-gray-700 overflow-hidden bg-white dark:bg-gray-900 h-full flex flex-col">
+    <Card className="group hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-900 overflow-hidden bg-white dark:bg-slate-900 h-full flex flex-col">
       <CardContent className="p-6 grow">
         {/* Status Tag */}
-        <div className="mb-4">
+        <div className="mb-4 flex justify-between items-start">
           <div
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
               isPositionClosed
-                ? "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300"
-                : "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300"
+                ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                : "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
             }`}
           >
             <div
-              className={`h-1.5 w-1.5 rounded-full ${isPositionClosed ? "bg-red-500" : "bg-green-500"}`}
+              className={`h-1.5 w-1.5 rounded-full ${isPositionClosed ? "bg-red-500" : "bg-blue-500 animate-pulse"}`}
             />
-            {isPositionClosed ? "Position Closed" : "Active • Hiring"}
+            {isPositionClosed ? "Closed" : "Hiring Now"}
           </div>
+          
+          <span className="text-[10px] text-slate-400 font-medium uppercase">
+            {job.job_type || "Full Time"}
+          </span>
         </div>
 
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-blue-600 transition-colors line-clamp-1">
               {job.title}
             </h3>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <Building2 className="h-4 w-4" />
+            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 font-medium">
+              <Building2 className="h-4 w-4 text-blue-500" />
               <span className="truncate">{job.company_name}</span>
             </div>
           </div>
 
           <Link
             href={`/company/${job.company_id}`}
-            className="shrink-0 hover:opacity-90 transition-opacity"
+            className="shrink-0 hover:scale-105 transition-transform"
           >
-            <div className="relative w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden bg-white dark:bg-gray-800">
+            <div className="relative w-12 h-12 rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden bg-slate-50 shadow-sm">
               <Image
                 src={job.company_logo || "/placeholder-company.png"}
                 alt={job.company_name}
                 fill
-                className="object-cover"
-                sizes="40px"
+                className="object-contain p-1"
+                sizes="48px"
               />
             </div>
           </Link>
         </div>
 
-        {/* Short Description */}
-        <div className="mb-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-            {getShortDescription()}
-          </p>
-        </div>
-
-        {/* Job Details */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-3 text-sm">
-            <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300">
-              <MapPin className="h-4 w-4" />
-              <span>{job.location}</span>
-              {isRemote && (
-                <span className="ml-1 px-1.5 py-0.5 text-xs rounded bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300">
-                  Remote
-                </span>
-              )}
+        {/* Details Grid */}
+        <div className="grid grid-cols-1 gap-3 mt-6">
+          <div className="flex items-center gap-2.5 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <div className="p-1.5 bg-slate-50 dark:bg-slate-800 rounded-md">
+              <MapPin className="h-4 w-4 text-blue-500" />
             </div>
+            <span>{job.location}</span>
+            {isRemote && (
+              <span className="ml-auto px-2 py-0.5 text-[10px] rounded bg-green-50 dark:bg-green-900/20 text-green-600 font-bold uppercase">
+                Remote
+              </span>
+            )}
           </div>
 
-          <div className="flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300">
-            <IndianRupee className="h-4 w-4" />
-            <span className="font-medium">{formatSalary(job.salary)}</span>
+          <div className="flex items-center gap-2.5 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <div className="p-1.5 bg-slate-50 dark:bg-slate-800 rounded-md">
+              <Banknote className="h-4 w-4 text-blue-500" />
+            </div>
+            <span className="text-slate-900 dark:text-slate-100 font-bold">{formatSalary(job.salary)}</span>
           </div>
         </div>
       </CardContent>
 
       <CardFooter className="p-6 pt-0">
         <div className="flex gap-3 w-full">
-          <Link href={`/jobs/${job.job_id}`} className="flex-1">
+          <Link href={`/jobs/${job.job_id}`} className="flex-[0.5]">
             <Button
               variant="outline"
-              className="w-full gap-2 h-10 rounded-lg border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
+              className="w-full gap-2 h-11 rounded-xl border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold text-slate-700 dark:text-slate-200"
             >
-              View Details
-              <ArrowUpRight className="h-3.5 w-3.5" />
+              Details
             </Button>
           </Link>
 
           {user?.role === "jobseeker" && !isPositionClosed && (
             <div className="flex-1">
               {isApplied ? (
-                <div className="flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-green-600 dark:text-green-400">
-                  <CheckCircle2 className="h-4 w-4" />
-                  <span className="text-sm font-medium">Applied</span>
+                <div className="flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-600 dark:text-blue-400">
+                  <CheckCircle2 className="h-5 w-5" />
+                  <span className="text-sm font-bold">Applied</span>
                 </div>
               ) : (
                 <Button
                   onClick={handleApply}
                   disabled={isApplying}
-                  className="w-full gap-2 h-10 rounded-lg bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-sm"
+                  className="w-full gap-2 h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95"
                 >
                   {isApplying ? (
-                    <>
-                      <Clock className="h-4 w-4 animate-spin" />
-                      Applying
-                    </>
+                    <Clock className="h-4 w-4 animate-spin" />
                   ) : (
                     <>
-                      <Zap className="h-3.5 w-3.5" />
-                      Apply
+                      <Zap className="h-4 w-4 fill-current" />
+                      Quick Apply
                     </>
                   )}
                 </Button>
@@ -191,11 +168,13 @@ const JobsCard: React.FC<JobCardProps> = ({ job }) => {
             </div>
           )}
 
-          {!user && !isPositionClosed && (
-            <Button className="flex-1 gap-2 h-10 rounded-lg bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-              <Briefcase className="h-3.5 w-3.5" />
-              Apply
-            </Button>
+          {(!user || user.role !== "jobseeker") && !isPositionClosed && (
+            <Link href={`/jobs/${job.job_id}`} className="flex-1">
+               <Button className="w-full gap-2 h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-500/20">
+                View Job
+                <ArrowUpRight className="h-4 w-4" />
+              </Button>
+            </Link>
           )}
         </div>
       </CardFooter>

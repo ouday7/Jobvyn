@@ -1,324 +1,170 @@
 "use client";
-
+import React, { useState } from "react";
 import Link from "next/link";
-import { useState } from "react";
-import { Button } from "./ui/button";
-import {
-  BriefcaseBusinessIcon,
-  LucideHome,
-  User,
-  LogIn,
+import { usePathname } from "next/navigation";
+import { 
+  Menu, 
+  X, 
+  BriefcaseBusiness, 
+  User as UserIcon, 
   LogOut,
-  InfoIcon,
-  Menu,
-  X,
-  ChevronDown,
-  Search,
-  Sparkles,
+  ChevronDown
 } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
 import { ModeToggle } from "./mode-toggle";
 import { useAppData } from "@/context/AppContext";
-import { log } from "console";
+import Cookies from "js-cookie";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuth, user, setIsAuth, setUser, loading, logoutUser } =
-    useAppData();
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
+  const pathname = usePathname();
+  const { isAuth, user, setIsAuth, setUser } = useAppData();
+
+  const navigation = [
+    { name: "الرئيسية", href: "/" },
+    { name: "عروض شغل", href: "/jobs" },
+    { name: "مهن حرة", href: "/freelance" },
+    { name: "احنا شكون", href: "/about" }, // التصليح هنا: احنا شكون
+  ];
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    setIsAuth(false);
+    setUser(null);
+    window.location.href = "/";
   };
 
-  const logoutHandler = () => {
-    logoutUser();
-  };
+  const arabicFont = { fontFamily: "'Segoe UI', Tahoma, Arial, sans-serif" };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl supports-backdrop-filter:bg-white/60 supports-backdrop-filter:dark:bg-slate-950/60">
+    <nav className="sticky top-0 z-[100] w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm" dir="rtl" style={arabicFont}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link href={"/"} className="group flex items-center gap-2">
-              <div className="relative">
-                <div className="absolute -inset-2 bg-linear-to-r from-blue-500 to-purple-500 rounded-lg blur opacity-20 group-hover:opacity-30 transition-opacity" />
-                <div className="relative flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                  <span className="text-xl font-bold tracking-tight bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-                    Jobvyn
-                  </span>
-                </div>
+          
+          {/* Logo & Navigation */}
+          <div className="flex items-center gap-8">
+            <Link href="/" className="flex items-center gap-2 shrink-0">
+              <div className="bg-blue-600 p-1.5 rounded-xl shadow-md">
+                <BriefcaseBusiness className="text-white" size={20} />
               </div>
+              <span className="text-2xl font-black text-slate-900 dark:text-white font-sans tracking-tighter">
+                5addem<span className="text-blue-600">ni</span>
+              </span>
             </Link>
+
+            <div className="hidden md:flex items-center gap-1">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`px-4 py-2 text-[15px] font-bold rounded-xl transition-all ${
+                    pathname === item.href 
+                      ? "text-blue-600 bg-blue-50 dark:bg-blue-900/40" 
+                      : "text-slate-600 hover:text-blue-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            <Link href={"/"}>
-              <Button
-                variant={"ghost"}
-                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-3 cursor-pointer"
-              >
-                <LucideHome className="h-4 w-4" />
-                Home
-              </Button>
-            </Link>
-            <Link href={"/jobs"}>
-              <Button
-                variant={"ghost"}
-                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-3 cursor-pointer"
-              >
-                <BriefcaseBusinessIcon className="h-4 w-4" />
-                Jobs
-              </Button>
-            </Link>
-            <Link href={"/about"}>
-              <Button
-                variant={"ghost"}
-                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 px-3 cursor-pointer"
-              >
-                <InfoIcon className="h-4 w-4" />
-                About
-              </Button>
-            </Link>
-          </div>
-
-          {/* Right side Actions - Desktop */}
-          <div className="hidden md:flex items-center gap-3">
-            {/* Search Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 text-gray-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 cursor-pointer"
-            >
-              <Search className="h-4 w-4" />
-              <span className="hidden lg:inline">Search</span>
-            </Button>
-
-            {/* Auth Section */}
-            {loading ? (
-              ""
-            ) : (
-              <>
-                {isAuth ? (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button className="flex items-center gap-2 rounded-full border border-gray-200 dark:border-slate-700 px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors cursor-pointer">
-                        <Avatar className="h-7 w-7">
-                          <AvatarImage
-                            src={user ? (user.profile_pic as string) : ""}
-                            alt={user ? user.name : "User Avatar"}
-                          />
-                          <AvatarFallback className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-xs">
-                            {user?.name?.charAt(0).toUpperCase() || "U"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col items-start">
-                          <span className="text-xs font-medium text-gray-900 dark:text-white">
-                            {user?.name || "User"}
-                          </span>
-                          <span className="text-xs text-gray-500 dark:text-slate-400">
-                            {user?.email || ""}
-                          </span>
-                        </div>
-                        <ChevronDown className="h-4 w-4 text-gray-500 dark:text-slate-400" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-56 p-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900"
-                      align="end"
-                      sideOffset={8}
-                    >
-                      {/* <div className="px-3 py-2 mb-2 border-b border-gray-100 dark:border-slate-800">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      Arun
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-slate-400 truncate">
-                      arunkoo072@gmail.com
-                    </p>
-                  </div> */}
-                      <Link href={"/account"}>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start gap-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800"
-                        >
-                          <User className="h-4 w-4" />
-                          My Account
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-2 text-sm mt-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                        onClick={logoutHandler}
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Sign Out
-                      </Button>
-                    </PopoverContent>
-                  </Popover>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Link href={"/login"}>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="gap-2 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer"
-                      >
-                        <LogIn className="h-4 w-4" />
-                        Sign In
-                      </Button>
-                    </Link>
-                    <Link href={"/register"}>
-                      <Button
-                        size="sm"
-                        className="gap-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm hover:shadow cursor-pointer"
-                      >
-                        Get Started
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* Theme Toggle */}
+          {/* Actions & Buttons */}
+          <div className="flex items-center gap-3">
             <ModeToggle />
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <div className="flex md:hidden items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 cursor-pointer"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-            <ModeToggle />
-            <button
-              onClick={toggleMenu}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-              aria-label="Toggle menu"
-            >
-              {isOpen ? (
-                <X className="h-5 w-5 text-gray-700 dark:text-slate-300" />
-              ) : (
-                <Menu className="h-5 w-5 text-gray-700 dark:text-slate-300" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <div
-          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-            isOpen
-              ? "max-h-96 opacity-100 border-t border-gray-200 dark:border-slate-800"
-              : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="py-4 space-y-1 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl">
-            <Link href={"/"} onClick={toggleMenu}>
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 h-12 text-gray-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 cursor-pointer"
-              >
-                <LucideHome className="h-5 w-5" />
-                Home
-              </Button>
-            </Link>
-            <Link href={"/jobs"} onClick={toggleMenu}>
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 h-12 text-gray-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 cursor-pointer"
-              >
-                <BriefcaseBusinessIcon className="h-5 w-5" />
-                Jobs
-              </Button>
-            </Link>
-            <Link href={"/about"} onClick={toggleMenu}>
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 h-12 text-gray-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 cursor-pointer"
-              >
-                <InfoIcon className="h-5 w-5" />
-                About
-              </Button>
-            </Link>
-
-            {/* Mobile Auth Section */}
-            <div className="pt-2 mt-2 border-t border-gray-100 dark:border-slate-800">
-              {loading ? (
-                ""
-              ) : (
-                <>
-                  {isAuth ? (
-                    <>
-                      <div className="flex items-center gap-3 px-3 py-3 mb-2">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage
-                            src={user ? (user.profile_pic as string) : ""}
-                            alt={user ? user.name : "User Avatar"}
-                          />
-                          <AvatarFallback className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-                            {user?.name?.charAt(0).toUpperCase() || "U"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                            {user?.name || "User"}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-slate-400">
-                            {user?.email || ""}
-                          </p>
-                        </div>
+            
+            <div className="flex items-center">
+              {isAuth ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-3 p-1 pl-4 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-all outline-none">
+                      <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-black">
+                        {user?.name?.[0]?.toUpperCase() || "U"}
                       </div>
-                      <Link href={"/account"} onClick={toggleMenu}>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start gap-3 h-12 text-gray-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 cursor-pointer"
-                        >
-                          <User className="h-5 w-5" />
-                          My Account
-                        </Button>
+                      <div className="hidden sm:flex flex-col items-start leading-tight">
+                        <span className="text-[14px] font-black text-slate-900 dark:text-white">{user?.name || "خويا"}</span>
+                        <span className="text-[10px] text-slate-500 font-bold uppercase">حسابي</span>
+                      </div>
+                      <ChevronDown size={14} className="text-slate-400" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  
+                  <DropdownMenuContent align="start" className="w-52 mt-2 p-2 rounded-2xl shadow-2xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-right" style={arabicFont}>
+                    <DropdownMenuItem asChild className="cursor-pointer rounded-xl py-3 focus:bg-blue-50 dark:focus:bg-blue-800/30">
+                      <Link href="/account" className="flex items-center justify-end gap-3 font-bold w-full">
+                        <span className="text-[14px]">إعدادات الحساب</span>
+                        <UserIcon size={18} className="text-blue-600" />
                       </Link>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-3 h-12 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer"
-                        onClick={() => {
-                          logoutHandler();
-                          toggleMenu();
-                        }}
-                      >
-                        <LogOut className="h-5 w-5" />
-                        Sign Out
-                      </Button>
-                    </>
-                  ) : (
-                    <div className="space-y-2">
-                      <Link href={"/login"} onClick={toggleMenu}>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-center gap-3 h-12 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer"
-                        >
-                          <LogIn className="h-5 w-5" />
-                          Sign In
-                        </Button>
-                      </Link>
-                      <Link href={"/register"} onClick={toggleMenu}>
-                        <Button className="w-full justify-center gap-3 h-12 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm hover:shadow cursor-pointer">
-                          Get Started
-                        </Button>
-                      </Link>
-                    </div>
-                  )}
-                </>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer rounded-xl py-3 text-red-600 font-black">
+                      <div className="flex items-center justify-end gap-3 w-full">
+                        <span className="text-[14px]">خروج</span>
+                        <LogOut size={18} />
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <div className="flex items-center gap-2">
+                  {/* أزرار مصلحة بألوان قوية */}
+                  <Button asChild variant="ghost" className="hidden sm:inline-flex font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-xl">
+                    <Link href="/login">دخول</Link>
+                  </Button>
+                  
+                  <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-black px-5 rounded-xl shadow-md shadow-blue-500/30 transition-all active:scale-95">
+                    <Link href="/register">سجّل توّة</Link>
+                  </Button>
+                </div>
               )}
+            </div>
+
+            {/* Mobile Menu Icon */}
+            <div className="md:hidden">
+              <button onClick={() => setIsOpen(!isOpen)} className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-white">
+                {isOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Mobile Sidebar */}
+      {isOpen && (
+        <div className="md:hidden fixed inset-x-0 top-[64px] bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-2xl z-[110] animate-in slide-in-from-top duration-200">
+          <div className="px-4 py-6 space-y-2">
+            {navigation.map((item) => (
+              <Link 
+                key={item.name} 
+                href={item.href} 
+                onClick={() => setIsOpen(false)} 
+                className={`block px-4 py-4 text-lg font-bold rounded-2xl text-right ${
+                  pathname === item.href ? "bg-blue-50 text-blue-600 dark:bg-blue-900/40" : "text-slate-700 dark:text-slate-200"
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+            {!isAuth && (
+              <div className="grid grid-cols-2 gap-3 pt-6 border-t border-slate-100 dark:border-slate-800 mt-4">
+                <Button asChild variant="outline" className="rounded-xl font-bold border-blue-200 dark:border-blue-900 text-blue-600 dark:text-blue-400">
+                  <Link href="/login" onClick={() => setIsOpen(false)}>دخول</Link>
+                </Button>
+                <Button asChild className="bg-blue-600 text-white font-black rounded-xl">
+                  <Link href="/register" onClick={() => setIsOpen(false)}>سجّل توّة</Link>
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

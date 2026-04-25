@@ -1,175 +1,164 @@
-import CareerGuidance from "@/components/carrerGuidance";
-import ResumeAnalyzer from "@/components/resumeAnalyzer";
-import { FileCheck, Sparkles, Target } from "lucide-react";
+"use client";
 import React from "react";
+import { 
+  Globe2, 
+  Zap, 
+  MousePointer2,
+  TrendingUp,
+  Award
+} from "lucide-react";
 
-const AiCardLayout = () => {
+const KhaddemniLanding = () => {
+  const partners = [
+    { 
+      name: "ANETI", 
+      url: "https://scontent.ftun8-1.fna.fbcdn.net/v/t39.30808-6/272327292_248682147437401_2838525502664882152_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=uogFl4VPEOAQ7kNvwHfPzd0&_nc_oc=Adpxsn0XoWfSA9rQ1wr9JIbGxG94-JTxBOlFpq4oR3QvznnuXwrkiWtRKODEjR6YW5w&_nc_zt=23&_nc_ht=scontent.ftun8-1.fna&_nc_gid=dg9ufUUI1oWkeRRiiYOGhw&_nc_ss=7a3a8&oh=00_Af1w0QcMVXzWlmxhRs6Luazq9KUvFXO4G0XNV7Xiki7gGw&oe=69E569F1",
+      label: "الشريك الوطني للتشغيل"
+    },
+    { 
+      name: "AHK Tunisia", 
+      url: "https://jamaity.org/wp-content/uploads/2016/03/logo_ahk.jpg",
+      label: "الشريك الاستراتيجي الألماني"
+    },
+    { 
+      name: "Amen Assurance", 
+      url: "https://www.african-markets.com/images/markets/bvmt/amen-bank.jpg",
+      label: "شريك الأمان والضمان المهني"
+    }
+  ];
+
+  const objectives = [
+    {
+      title: "تسهيل الإدماج المهني",
+      desc: "أداة رقمية بسيطة ومباشرة لربط طالبي الشغل بالمشغلين في أسرع وقت ممكن.",
+      icon: <MousePointer2 size={24} />
+    },
+    {
+      title: "تقليص الفوارق الجهوية",
+      desc: "خلق فرص متساوية للتشغيل في كامل تراب الجمهورية والحد من التفاوت بين الفئات.",
+      icon: <Globe2 size={24} />
+    },
+    {
+      title: "هيكلة سوق الشغل",
+      desc: "المساهمة في تنظيم القطاع غير الرسمي وخلق قاعدة بيانات حية للكفاءات التونسية.",
+      icon: <TrendingUp size={24} />
+    }
+  ];
+
   return (
-    <div className="relative overflow-hidden bg-white dark:bg-slate-950">
-      {/* Background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-10 dark:bg-blue-900/10" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-100 rounded-full blur-3xl opacity-10 dark:bg-purple-900/10" />
-      </div>
-
-      {/* Services Section Header */}
-      <div className="relative py-12 md:py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 mb-6">
-              <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                AI Career Assistant
-              </span>
+    <section className="py-24 bg-white dark:bg-slate-950 selection:bg-blue-50" dir="rtl">
+      <div className="container mx-auto px-6 max-w-6xl">
+        
+        {/* --- Section 1: Introduction & Objectives --- */}
+        <div className="grid lg:grid-cols-2 gap-16 items-start mb-32">
+          <div className="text-right space-y-8">
+            
+            {/* NSSA & SPEEDYCOM Badge - النسخة الهادئة والأنيقة */}
+            <div className="inline-flex items-center gap-3 px-3 py-1.5 bg-slate-50/50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800 rounded-full transition-all duration-300 hover:border-blue-200 group">
+              <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600">
+                <Award size={14} />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Initiative par</span>
+                <span className="text-[13px] font-semibold text-slate-600 dark:text-slate-300 tracking-[0.1em]">
+                  NSSA & SPEEDYCOM
+                </span>
+              </div>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Your{" "}
-              <span className="bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-                AI-Powered
-              </span>{" "}
-              Career Advantage
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-slate-300">
-              Leverage AI to navigate your career path and optimize your job
-              search
+            
+            <h1 className="text-3xl md:text-[2.75rem] font-bold text-slate-900 dark:text-white leading-[1.15] tracking-tight">
+              خدمني: المنصة الوطنية <br/>
+              لربط <span className="text-blue-600 font-extrabold italic">الكفاءات</span> بالمشغلين.
+            </h1>
+            
+            <p className="text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl">
+              مشروع وطني طموح يهدف لرقمنة سوق الشغل في تونس وتوفير فرص حقيقية ومباشرة للجميع، بإشراف خبرات تقنية تونسية.
             </p>
-          </div>
-        </div>
-      </div>
 
-      {/* Cards Grid - Compact Version */}
-      <div className="relative pb-16 md:pb-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {/* Career Guidance Card - Left */}
-            <div className="group relative bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300">
-              {/* Icon and Header - Compact */}
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br from-blue-500/10 to-purple-500/10">
-                  <Target className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            {/* Statistiques */}
+            <div className="flex gap-12 pt-6">
+              <div className="flex flex-col">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter">12k</span>
+                  <span className="text-2xl font-bold text-blue-600">+</span>
+                </div>
+                <span className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-[0.2em]">فرصة شغل</span>
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter">65k</span>
+                  <span className="text-2xl font-bold text-blue-600">+</span>
+                </div>
+                <span className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-[0.2em]">باحث عن عمل</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Objectives Grid */}
+          <div className="grid gap-5">
+            {objectives.map((obj, idx) => (
+              <div key={idx} className="group p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-start gap-6 hover:shadow-[0_20px_40px_rgba(59,130,246,0.1)] hover:-translate-y-1 hover:border-blue-200 transition-all duration-300">
+                <div className="shrink-0 p-3 bg-blue-50 dark:bg-blue-950 rounded-2xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                  {obj.icon}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                    Smart Career Guidance
-                  </h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Discover your ideal career path
-                  </p>
+                  <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1">{obj.title}</h4>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{obj.desc}</p>
                 </div>
               </div>
-
-              {/* Brief Description */}
-              <p className="text-slate-600 dark:text-slate-300 mb-6">
-                Get personalized career recommendations, skill-based matching,
-                and a clear growth roadmap tailored to your unique abilities.
-              </p>
-
-              {/* Compact Feature Highlights */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
-                  <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                    50K+
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                    Paths
-                  </div>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
-                  <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                    95%
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                    Accuracy
-                  </div>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
-                  <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                    AI
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                    Powered
-                  </div>
-                </div>
-              </div>
-
-              {/* Button - Compact */}
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
-                <CareerGuidance />
-              </div>
-            </div>
-
-            {/* Resume Analyzer Card - Right */}
-            <div className="group relative bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300">
-              {/* Icon and Header - Compact */}
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br from-red-500/10 to-purple-500/10">
-                  <FileCheck className="h-6 w-6 text-red-600 dark:text-red-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                    ATS Resume Analyzer
-                  </h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Optimize for Applicant Tracking Systems
-                  </p>
-                </div>
-              </div>
-
-              {/* Brief Description */}
-              <p className="text-slate-600 dark:text-slate-300 mb-6">
-                Get instant feedback on your resume&apos;s ATS compatibility
-                with actionable suggestions and keyword optimization.
-              </p>
-
-              {/* Compact Feature Highlights */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
-                  <div className="text-lg font-bold text-red-600 dark:text-red-400">
-                    A+
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                    Score
-                  </div>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
-                  <div className="text-lg font-bold text-red-600 dark:text-red-400">
-                    40%
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                    Improvement
-                  </div>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
-                  <div className="text-lg font-bold text-red-600 dark:text-red-400">
-                    AI
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                    Analysis
-                  </div>
-                </div>
-              </div>
-
-              {/* Button - Compact */}
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
-                <ResumeAnalyzer />
-              </div>
-            </div>
-          </div>
-
-          {/* Combined Value Proposition - Smaller */}
-          <div className="mt-12 text-center">
-            <div className="inline-flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100/50 dark:border-blue-800/20">
-              <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <p className="text-sm text-slate-700 dark:text-slate-300">
-                <span className="font-semibold">Pro Tip:</span> Use both tools
-                together for best results.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
+
+        {/* --- Section 2: Partenaires Stratégiques (Premium) --- */}
+        <div className="pt-24 border-t border-slate-100/60 dark:border-slate-800/60">
+          
+          <div className="flex items-center justify-center gap-6 mb-24">
+            <div className="hidden md:block h-[1px] w-24 bg-gradient-to-l from-blue-600/50 to-transparent"></div>
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+              <div className="relative px-8 py-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                  <span>شركاء</span>
+                  <span className="text-blue-600 italic">النجاح</span>
+                  <span>الاستراتيجيين</span>
+                </h3>
+              </div>
+            </div>
+            <div className="hidden md:block h-[1px] w-24 bg-gradient-to-r from-blue-600/50 to-transparent"></div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {partners.map((p, i) => (
+              <div key={i} className="group relative">
+                <div className="absolute inset-0 bg-blue-600 rounded-[2.5rem] rotate-1 scale-95 opacity-0 group-hover:opacity-5 group-hover:scale-100 transition-all duration-500"></div>
+                
+                <div className="relative flex flex-col items-center bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 transition-all duration-500 group-hover:-translate-y-2 group-hover:border-blue-100 group-hover:shadow-[0_25px_50px_-12px_rgba(59,130,246,0.08)]">
+                  
+                  <div className="w-full h-32 flex items-center justify-center mb-6">
+                    <img 
+                      src={p.url} 
+                      alt={p.name} 
+                      className="max-h-full max-w-[180px] object-contain filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 ease-in-out transform group-hover:scale-110"
+                    />
+                  </div>
+
+                  <div className="w-8 h-[2px] bg-slate-100 dark:bg-slate-800 group-hover:w-16 group-hover:bg-blue-600 transition-all duration-500 mb-4"></div>
+
+                  <div className="text-center">
+                    <p className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] group-hover:text-blue-600 transition-colors">
+                      {p.label}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
-    </div>
+    </section>
   );
 };
 
-export default AiCardLayout;
+export default KhaddemniLanding;

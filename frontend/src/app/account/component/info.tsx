@@ -1,457 +1,196 @@
-/* eslint-disable react-hooks/purity */
-/* eslint-disable @next/next/no-img-element */
 "use client";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import React, { useState, useEffect } from "react";
+import { User as UserType } from "@/type";
+import { useAppData } from "@/context/AppContext"; 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAppData } from "@/context/AppContext";
-import { AccountProps } from "@/type";
-import {
-  AlertTriangle,
-  Briefcase,
-  CameraIcon,
-  CheckCircle,
-  CheckCircleIcon,
-  Crown,
-  Edit,
-  FileText,
-  Mail,
-  Notebook,
-  NotepadText,
-  Phone,
-  RefreshCw,
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { 
+  MapPin, GraduationCap, Car, Briefcase, Phone, 
+  Pencil, Settings, Mail, Camera, User as UserIcon,
+  Quote, Globe
 } from "lucide-react";
+import Image from "next/image";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { ChangeEvent, useMemo, useRef, useState } from "react";
-import toast from "react-hot-toast";
+const Info = ({ user, isYourAccount }: { user: UserType, isYourAccount: boolean }) => {
+  const { updateUser, btnLoading, updateProfilePic } = useAppData();
+  const [isOpen, setIsOpen] = useState(false);
 
-const Info: React.FC<AccountProps> = ({ isYourAccount, user }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const editRef = useRef<HTMLButtonElement | null>(null);
-  const resumeRef = useRef<HTMLInputElement | null>(null);
+  const [formData, setFormData] = useState({
+    name: "", phone_number: "", wilaya: "", moatmadia: "", 
+    education_type: "", permis_type: "", bio: "", specialty: ""
+  });
 
-  const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [bio, setBio] = useState("");
-  const { updateProfilePic, updateResume, btnLoading, updateUser } =
-    useAppData();
-  const handleClick = () => {
-    inputRef.current?.click();
-  };
-
-  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      updateProfilePic(formData);
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "", phone_number: user.phone_number || "",
+        wilaya: user.wilaya || "", moatmadia: user.moatmadia || "",
+        education_type: user.education_type || "", permis_type: user.permis_type || "",
+        bio: user.bio || "", specialty: user.specialty || ""
+      });
     }
-  };
-  const handleEditClick = () => {
-    editRef.current?.click();
-    setName(user?.name || "");
-    setPhoneNumber(user?.phone_number || "");
-    setBio(user?.bio || "");
-  };
+  }, [user]);
 
-  const updateProfileHandler = () => {
-    updateUser(name, phoneNumber, bio);
-  };
-  const handleResumeClick = () => {
-    resumeRef.current?.click();
-  };
-  const changeResumeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.type !== "application/pdf") {
-        toast.error("Please upload a PDF file.");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("file", file);
-      updateResume(formData);
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const fileData = new FormData();
+      fileData.append("image", e.target.files[0]);
+      updateProfilePic(fileData);
     }
   };
 
-  const router = useRouter();
+  const handleSave = async () => {
+    const success = await updateUser(formData);
+    if (success) setIsOpen(false);
+  };
 
   return (
-    <Card className="border border-slate-200 dark:border-slate-800 shadow-sm">
-      {/* Profile header */}
-      <div className="relative h-32 bg-linear-to-r from-blue-500 to-purple-500 dark:from-blue-950/30 dark:to-purple-900/30">
-        <div className="absolute -bottom-10 left-6">
-          <div className="relative">
-            <div className="w-28 h-28 rounded-full border-4 border-white dark:border-slate-900 overflow-hidden bg-white dark:bg-slate-800">
-              <img
-                src={
-                  user?.profile_pic
-                    ? (user?.profile_pic as string)
-                    : "/AvatarForAccountsPage.png"
-                }
-                alt={user?.name ? user.name : "Profile Picture"}
-                className="w-full h-full object-cover"
-              />
+    <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-700" dir="rtl">
+      
+      {/* --- Profile Card --- */}
+      <div className="bg-white dark:bg-slate-950 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl shadow-slate-200/50 dark:shadow-none">
+        
+        {/* Cover with Gradient Mesh */}
+        <div className="h-32 w-full bg-gradient-to-l from-blue-600 via-blue-500 to-indigo-600 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,1),transparent)]"></div>
+        </div>
+
+        <div className="px-8 pb-8">
+          <div className="relative flex flex-col md:flex-row items-end gap-6 -mt-12 mb-8">
+            
+            {/* Profile Image / Default Icon */}
+            <div className="relative group">
+              <div className="w-32 h-32 rounded-[2rem] border-4 border-white dark:border-slate-950 overflow-hidden shadow-2xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+                {user?.profile_pic ? (
+                  <Image src={user.profile_pic} alt="User" fill className="object-cover" />
+                ) : (
+                  <UserIcon size={48} className="text-slate-300 dark:text-slate-700" />
+                )}
+              </div>
+              {isYourAccount && (
+                <label className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-all cursor-pointer rounded-[2rem] backdrop-blur-sm">
+                  <Camera className="text-white" size={24} />
+                  <input type="file" className="hidden" onChange={handlePhotoChange} accept="image/*" />
+                </label>
+              )}
+            </div>
+
+            <div className="flex-1 pb-1 text-center md:text-right">
+                <h1 className="text-2xl font-black text-slate-900 dark:text-white leading-tight">
+                    {user?.name || "بدون اسم"}
+                </h1>
+                <p className="text-blue-600 font-extrabold text-sm flex items-center justify-center md:justify-start gap-1">
+                    <Globe size={14} /> {user?.specialty || "Software Engineer"}
+                </p>
             </div>
 
             {isYourAccount && (
-              <>
-                <Button
-                  variant={"secondary"}
-                  size={"icon"}
-                  onClick={handleClick}
-                  className="cursor-pointer absolute bottom-0 right-0 rounded-full h-7 w-7 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow"
-                >
-                  <CameraIcon
-                    size={14}
-                    className="text-slate-600 dark:text-slate-400"
-                  />
-                </Button>
-                <input
-                  title="file"
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  ref={inputRef}
-                  onChange={changeHandler}
-                />
-              </>
+              <Button onClick={() => setIsOpen(true)} className="rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-800 px-6 h-11 text-xs font-bold gap-2">
+                <Settings size={16} /> تعديل الحساب
+              </Button>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="pt-12 pb-6 px-6 space-y-6">
-        {/* Name and edit */}
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                {user?.name}
-              </h1>
-              {isYourAccount && (
-                <Button
-                  variant={"ghost"}
-                  size={"sm"}
-                  className="h-7 w-7 p-0 cursor-pointer text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
-                  onClick={handleEditClick}
-                >
-                  <Edit size={14} />
-                </Button>
-              )}
-            </div>
-            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-              <Briefcase size={14} />
-              <span className="capitalize">{user?.role}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Bio section */}
-        {user?.role === "jobseeker" && user?.bio && (
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-              <FileText size={14} />
-              About
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              {user.bio}
+          {/* Bio Section - Enhanced Visibility */}
+          <div className="bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 p-6 rounded-[2rem] relative">
+            <Quote className="absolute top-4 left-4 text-slate-200 dark:text-slate-800" size={32} />
+            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">النبذة الشخصية</h4>
+            <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed font-medium relative z-10">
+              {user?.bio || "هوني تنجم تكتب شويا على روحك، خبراتك، وأهم المشاريع اللي خدمت عليها..."}
             </p>
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* Contact Information */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Contact Information
-          </h3>
-          <div className="grid md:grid-cols-2 gap-3">
-            {/* Email */}
-            <div className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
-              <div className="h-8 w-8 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                <Mail size={14} className="text-blue-600 dark:text-blue-400" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Email
-                </p>
-                <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
-                  {user?.email}
-                </p>
-              </div>
-            </div>
-
-            {/* Phone */}
-            <div className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
-              <div className="h-8 w-8 rounded-md bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                <Phone
-                  size={14}
-                  className="text-purple-600 dark:text-purple-400"
-                />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Phone
-                </p>
-                <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
-                  {user?.phone_number || "Not provided"}
-                </p>
-              </div>
+      {/* --- Detailed Info Grid --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Contact Info */}
+        <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-sm">
+          <div className="space-y-6">
+            <h3 className="text-xs font-black text-blue-600 uppercase tracking-widest border-r-4 border-blue-600 pr-3">بيانات التواصل</h3>
+            <div className="grid gap-5">
+              <InfoItem icon={<MapPin size={18}/>} label="الولاية والمعتمدية" value={`${user?.wilaya || "---"}، ${user?.moatmadia || "---"}`} />
+              <InfoItem icon={<Phone size={18}/>} label="الهاتف" value={user?.phone_number} />
+              <InfoItem icon={<Mail size={18}/>} label="البريد الإلكتروني" value={user?.email} />
             </div>
           </div>
         </div>
 
-        {/* Resume section */}
-        {user?.role === "jobseeker" && user.resume && isYourAccount && (
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-              <Notebook size={14} />
-              Resume
-            </h3>
-            <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-md bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                  <NotepadText
-                    size={14}
-                    className="text-red-600 dark:text-red-400"
-                  />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
-                    Resume Document
-                  </p>
-                  <Link
-                    href={user.resume}
-                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                    target="_blank"
-                  >
-                    View PDF
-                  </Link>
-                </div>
-              </div>
-              <Button
-                variant={"outline"}
-                size={"sm"}
-                onClick={handleResumeClick}
-                className="text-xs h-8 px-3 cursor-pointer"
-              >
-                Update
-              </Button>
-            </div>
-            <input
-              title="file"
-              type="file"
-              ref={resumeRef}
-              className="hidden"
-              accept="application/pdf"
-              onChange={changeResumeHandler}
-            />
-          </div>
-        )}
-        {/* subscription sections.. */}
-        {isYourAccount && user?.role === "jobseeker" && (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Crown size={20} className="text-blue-600 dark:text-blue-400" />
-              Subscription Status
-            </h2>
-
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-              {/* Status Header */}
-              <div className="px-4 sm:px-6 py-4 bg-slate-50 dark:bg-slate-800/50">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    {!user.subscription ? (
-                      <>
-                        <p className="font-semibold text-lg text-slate-900 dark:text-white">
-                          No Active Subscription
-                        </p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                          Subscribe to unlock premium features
-                        </p>
-                      </>
-                    ) : new Date(user.subscription).getTime() > Date.now() ? (
-                      <>
-                        <div className="flex items-center gap-2">
-                          <CheckCircle size={20} className="text-green-600" />
-                          <p className="font-semibold text-lg text-green-600">
-                            Active Subscription
-                          </p>
-                        </div>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                          Valid until{" "}
-                          {new Date(user.subscription).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            },
-                          )}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <div className="flex items-center gap-2">
-                          <AlertTriangle size={20} className="text-red-600" />
-                          <p className="font-semibold text-lg text-red-600">
-                            Subscription Expired
-                          </p>
-                        </div>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                          Expired on{" "}
-                          {new Date(user.subscription).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            },
-                          )}
-                        </p>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Status Badge - Hidden on mobile when no subscription */}
-                  {user.subscription && (
-                    <div className="shrink-0">
-                      {new Date(user.subscription).getTime() > Date.now() ? (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-medium">
-                          <CheckCircleIcon size={16} />
-                          Active
-                        </div>
-                      ) : (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-sm font-medium">
-                          <AlertTriangle size={16} />
-                          Expired
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Action Section */}
-              <div className="px-4 sm:px-6 py-4 bg-white dark:bg-slate-900">
-                <div className="flex flex-col sm:flex-row gap-3">
-                  {!user.subscription ? (
-                    <Button
-                      onClick={() => router.push("/subscribe")}
-                      className="gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
-                    >
-                      <Crown size={18} />
-                      Subscribe Now
-                    </Button>
-                  ) : new Date(user.subscription).getTime() > Date.now() ? (
-                    <>
-                      <Button
-                        variant="outline"
-                        onClick={() => router.push("/subscribe")}
-                        className="gap-2 cursor-pointer w-full sm:w-auto"
-                      >
-                        <RefreshCw size={18} />
-                        Manage Subscription
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      variant="destructive"
-                      onClick={() => router.push("/subscribe")}
-                      className="gap-2 cursor-pointer w-full sm:w-auto"
-                    >
-                      <RefreshCw size={18} />
-                      Renew Subscription
-                    </Button>
-                  )}
-
-                  {/* View Pricing Link - Always visible */}
-                </div>
-              </div>
+        {/* Professional Info */}
+        <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-sm">
+          <div className="space-y-6">
+            <h3 className="text-xs font-black text-indigo-600 uppercase tracking-widest border-r-4 border-indigo-600 pr-3">المسار المهني</h3>
+            <div className="grid gap-5">
+              <InfoItem icon={<GraduationCap size={18}/>} label="المستوى التعليمي" value={user?.education_type} />
+              <InfoItem icon={<Briefcase size={18}/>} label="التخصص" value={user?.specialty} />
+              <InfoItem icon={<Car size={18}/>} label="رخصة السياقة" value={user?.permis_type} />
             </div>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Edit Profile Dialog */}
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button ref={editRef} variant={"outline"} className="hidden">
-            Edit Profile
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-semibold">
-              Edit Profile
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-medium">
-                Full Name
-              </Label>
-              <Input
-                id="name"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="h-9 text-sm"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="text-sm font-medium">
-                Phone Number
-              </Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="Enter phone number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="h-9 text-sm"
-              />
-            </div>
-            {user?.role === "jobseeker" && isYourAccount && (
-              <div className="space-y-2">
-                <Label htmlFor="bio" className="text-sm font-medium">
-                  Bio
-                </Label>
-                <textarea
-                  id="bio"
-                  placeholder="Tell about yourself..."
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  className="w-full min-h-24 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-transparent text-sm resize-none"
-                />
-              </div>
-            )}
+      {/* --- Popup Edit --- */}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="max-w-2xl rounded-[3rem] p-0 overflow-hidden border-none shadow-2xl" dir="rtl">
+          <div className="bg-slate-900 p-6 text-white flex items-center gap-3">
+            <div className="p-2 bg-blue-600 rounded-xl"><Settings size={18}/></div>
+            <DialogTitle className="text-lg font-bold">تحديث معلوماتك</DialogTitle>
           </div>
-          <DialogFooter>
-            <Button
-              disabled={btnLoading}
-              onClick={updateProfileHandler}
-              className="w-full h-9 text-sm bg-blue-600 hover:bg-blue-700"
-            >
-              {btnLoading ? "Saving..." : "Save Changes"}
+          
+          <div className="p-8 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+               <EditField label="الاسم الكامل" value={formData.name} onChange={(v)=>setFormData({...formData, name:v})} />
+               <EditField label="رقم الهاتف" value={formData.phone_number} onChange={(v)=>setFormData({...formData, phone_number:v})} />
+               <EditField label="الولاية" value={formData.wilaya} onChange={(v)=>setFormData({...formData, wilaya:v})} />
+               <EditField label="المعتمدية" value={formData.moatmadia} onChange={(v)=>setFormData({...formData, moatmadia:v})} />
+               <EditField label="المستوى التعليمي" value={formData.education_type} onChange={(v)=>setFormData({...formData, education_type:v})} />
+               <EditField label="التخصص" value={formData.specialty} onChange={(v)=>setFormData({...formData, specialty:v})} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase mr-1">النبذة الشخصية (Bio)</label>
+              <textarea 
+                className="w-full p-5 rounded-[1.5rem] border-2 border-slate-100 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none text-right min-h-[120px] text-sm font-medium transition-all"
+                value={formData.bio}
+                onChange={(e) => setFormData({...formData, bio: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className="p-8 bg-slate-50 dark:bg-slate-900 flex gap-4">
+            <Button onClick={handleSave} disabled={btnLoading} className="flex-1 bg-blue-600 hover:bg-blue-700 h-14 rounded-2xl font-bold shadow-lg shadow-blue-500/20">
+              {btnLoading ? "قاعدين نسيفوا..." : "حفظ التغييرات"}
             </Button>
-          </DialogFooter>
+            <Button variant="ghost" onClick={() => setIsOpen(false)} className="px-8 h-14 rounded-2xl text-slate-500 font-bold">إلغاء</Button>
+          </div>
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   );
 };
+
+// Sub-Components
+const InfoItem = ({ icon, label, value }: { icon: any, label: string, value: any }) => (
+  <div className="flex items-center gap-4 group">
+    <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 transition-all">
+      {icon}
+    </div>
+    <div className="space-y-0.5">
+      <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{label}</span>
+      <p className="text-sm font-extrabold text-slate-800 dark:text-slate-200">{value || "غير متوفر"}</p>
+    </div>
+  </div>
+);
+
+const EditField = ({ label, value, onChange }: { label:string, value:string, onChange:(v:string)=>void }) => (
+  <div className="space-y-1.5">
+    <label className="text-[10px] font-black text-slate-400 uppercase mr-1">{label}</label>
+    <Input 
+      value={value} 
+      onChange={(e) => onChange(e.target.value)} 
+      className="h-12 rounded-[1.2rem] border-2 border-slate-100 bg-slate-50 focus:bg-white focus:border-blue-500 font-bold text-sm transition-all shadow-sm" 
+    />
+  </div>
+);
 
 export default Info;

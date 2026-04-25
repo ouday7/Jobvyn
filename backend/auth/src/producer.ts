@@ -10,7 +10,10 @@ export const connectKafka = async () => {
   try {
     const kafka = new Kafka({
       clientId: "auth-service",
-      brokers: [process.env.Kafka_Brokers || "localhost:9092"],
+      // Utilisation du port 9096 défini dans ton docker-compose
+      brokers: [process.env.Kafka_Brokers || "localhost:9096"],
+      // Désactivation de SSL car Docker tourne en mode Plaintext localement
+      ssl: false,
     });
 
     admin = kafka.admin();
@@ -23,23 +26,24 @@ export const connectKafka = async () => {
         topics: [
           {
             topic: "send-mail",
-            numPartitions: 1, //amount of work load in parallisim..
-            replicationFactor: 1, //that it means how many copies of data i want to save on diff brokers..
+            numPartitions: 1,
+            replicationFactor: 1,
           },
         ],
       });
 
-      console.log("✅ Topic: 'send-mail' created succesfully.");
+      console.log("✅ Topic: 'send-mail' created successfully.");
     }
-    admin.disconnect();
+    
+    await admin.disconnect();
 
-    //activate producer....
+    // Initialisation et connexion du producer
     producer = kafka.producer();
     await producer.connect();
 
     console.log("✅ Connected to kafka producer");
   } catch (error) {
-    console.log("❌ Failed to connect kafka");
+    console.log("❌ Failed to connect kafka", error);
   }
 };
 
@@ -65,6 +69,6 @@ export const publishToTopic = async (topic: string, message: any) => {
 
 export const disconnectKafka = async () => {
   if (producer) {
-    producer.disconnect();
+    await producer.disconnect();
   }
 };

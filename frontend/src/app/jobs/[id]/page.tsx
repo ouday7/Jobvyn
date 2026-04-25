@@ -9,7 +9,6 @@ import { Application, jobs } from "@/type";
 import axios from "axios";
 import {
   ArrowLeft,
-  Briefcase,
   Building2,
   CheckCircle2,
   MapPin,
@@ -17,6 +16,9 @@ import {
   Users,
   FileText,
   UserCircle,
+  Calendar,
+  ChevronRight,
+  ExternalLink,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -43,418 +45,228 @@ const Jobpage = () => {
   const token = Cookies.get("token");
 
   const [filterStatus, setFilterStatus] = useState("All");
-  const [jobApplication, setJobApplication] = useState<Application[] | null>(
-    null,
-  );
+  const [jobApplication, setJobApplication] = useState<Application[] | null>(null);
   const [statusValue, setStatusValue] = useState("");
 
-  // Handle apply job
   const handleApply = async () => {
     if (isApplied || isApplying || !id) return;
-
     setIsApplying(true);
     try {
       await applyJob(Number(id));
       setIsApplied(true);
-      toast.success("Application submitted successfully!");
+      toast.success("Mabrouk! El demande tba3thet");
     } catch (error) {
-      console.error("Application error:", error);
-      toast.error("Failed to submit application");
+      toast.error("Mochkla sghira, ma tba3thetch");
     } finally {
       setIsApplying(false);
     }
   };
 
   const formatSalary = (salary: number | null | undefined) => {
-    if (!salary) return "Competitive";
-    if (salary >= 1000000) {
-      return `₹${(salary / 1000000).toFixed(1)}L/yr`;
-    }
-    return `₹${(salary / 1000).toFixed(0)}k/yr`;
+    if (!salary) return "Négociable";
+    return `${(salary / 1000).toFixed(0)}k DT / an`;
   };
 
-  // Fetch job applications
   async function fetchJobApplications() {
     try {
-      const { data } = await axios.get(
-        `${job_service_url}/api/job/applications/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const { data } = await axios.get(`${job_service_url}/api/job/applications/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setJobApplication(data);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) { console.log(error); }
   }
 
-  // Fetch single job
   async function fetchSingleJob() {
     try {
       const { data } = await axios.get(`${job_service_url}/api/job/${id}`);
       setJob(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) { console.log(error); } finally { setLoading(false); }
   }
 
-  const filteredApplication =
-    filterStatus === "All"
-      ? jobApplication
-      : jobApplication?.filter((app) => app.status === filterStatus);
+  const filteredApplication = filterStatus === "All" 
+    ? jobApplication 
+    : jobApplication?.filter((app) => app.status === filterStatus);
 
   const updateApplicationHandler = async (applicationId: number) => {
-    if (statusValue === "") return toast.error("Please select a status");
+    if (!statusValue) return toast.error("Ekhtar etat");
     try {
-      const { data } = await axios.put(
-        `${job_service_url}/api/job/application/update/${applicationId}`,
-        { status: statusValue },
-        { headers: { Authorization: `Bearer ${token}` } },
+      await axios.put(`${job_service_url}/api/job/application/update/${applicationId}`, 
+        { status: statusValue }, 
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchJobApplications();
-      toast.success(data.message);
+      toast.success("Tbadlet bnaje7");
       setStatusValue("");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to update status");
-    }
+    } catch (error) { toast.error("Erreur serveur"); }
   };
 
   useEffect(() => {
     if (application && id && Array.isArray(application)) {
-      const hasApplied = application.some(
-        (item: any) => item.job_id.toString() === id,
-      );
-      setIsApplied(hasApplied);
+      setIsApplied(application.some((item: any) => item.job_id.toString() === id));
     }
     fetchSingleJob();
   }, [application, id]);
 
   useEffect(() => {
-    if (user && job && user.user_id === job.posted_by_recruiter_id) {
-      fetchJobApplications();
-    }
+    if (user && job && user.user_id === job.posted_by_recruiter_id) fetchJobApplications();
   }, [user, job]);
 
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#020617]"><Loading /></div>;
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
-      {loading ? (
-        <div className="flex items-center justify-center min-h-screen">
-          <Loading />
-        </div>
-      ) : (
-        <>
-          {job && (
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              {/* Back button */}
-              <Button
-                variant="ghost"
-                className="mb-6 gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
-                onClick={() => router.back()}
-              >
-                <ArrowLeft size={18} />
-                Back to jobs
-              </Button>
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#020617] py-6 md:py-12 px-4 antialiased">
+      {job && (
+        <div className="max-w-4xl mx-auto space-y-6">
+          
+          {/* Top Header Section */}
+          <div className="flex items-center justify-between px-1">
+            <Button variant="ghost" size="sm" className="gap-2 text-slate-500 hover:text-blue-600" onClick={() => router.back()}>
+              <ArrowLeft size={16} /> <span className="text-xs font-bold uppercase tracking-tight">Annonces</span>
+            </Button>
+            <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-widest bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              ID: #{id}
+            </Badge>
+          </div>
 
-              {/* Job Header Card */}
-              <Card className="overflow-hidden border border-gray-200 dark:border-gray-800 mb-8">
-                <div className="bg-linear-to-r from-purple-600 to-blue-600 p-6 md:p-8">
-                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-4">
-                        <Badge
-                          className={`px-3 py-1.5 rounded-full text-sm font-medium ${
-                            job.is_active
-                              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-                              : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                          }`}
-                        >
-                          {job.is_active
-                            ? "Active • Hiring"
-                            : "Position Closed"}
-                        </Badge>
-                        {job.location?.toLowerCase().includes("remote") && (
-                          <Badge className="px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-sm font-medium">
-                            Remote
-                          </Badge>
-                        )}
-                      </div>
-
-                      <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                        {job.title}
-                      </h1>
-
-                      <div className="flex items-center gap-3 text-white/90">
-                        <div className="flex items-center gap-2">
-                          <Building2 size={20} />
-                          <span className="font-medium">
-                            {job.company_name}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin size={20} />
-                          <span>{job.location}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Apply Button Section */}
-                    {user?.role === "jobseeker" && (
-                      <div className="shrink-0">
-                        {isApplied ? (
-                          <div className="flex items-center gap-3 px-6 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white">
-                            <CheckCircle2 size={20} />
-                            <span className="font-medium">Applied</span>
-                          </div>
-                        ) : job.is_active ? (
-                          <Button
-                            onClick={handleApply}
-                            disabled={btnLoading || isApplying}
-                            className="gap-3 h-12 px-8 rounded-xl bg-white text-purple-600 hover:bg-white/90 font-semibold"
-                          >
-                            <Briefcase size={20} />
-                            {isApplying || btnLoading
-                              ? "Applying..."
-                              : "Apply Now"}
-                          </Button>
-                        ) : null}
-                      </div>
+          {/* Compact Main Card */}
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div className="p-6 md:p-10 space-y-8">
+              
+              <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+                <div className="space-y-4 flex-1">
+                  <div className="flex gap-2">
+                    <Badge className={job.is_active ? "bg-emerald-500/10 text-emerald-600 border-none" : "bg-red-500/10 text-red-600 border-none"}>
+                      {job.is_active ? "Ouvert" : "Fermé"}
+                    </Badge>
+                    {job.location?.toLowerCase().includes("remote") && (
+                      <Badge className="bg-blue-500/10 text-blue-600 border-none">Remote</Badge>
                     )}
                   </div>
-                </div>
-
-                {/* Job Stats */}
-                <div className="p-6 md:p-8">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-                      <div className="h-12 w-12 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
-                        <MapPin
-                          size={20}
-                          className="text-purple-600 dark:text-purple-400"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                          Location
-                        </p>
-                        <p className="font-semibold text-gray-900 dark:text-white">
-                          {job.location}
-                        </p>
-                      </div>
+                  <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                    {job.title}
+                  </h1>
+                  <div className="flex flex-wrap gap-4 text-slate-500">
+                    <div className="flex items-center gap-1.5">
+                      <Building2 size={16} className="text-blue-500" />
+                      <span className="text-sm font-bold">{job.company_name}</span>
                     </div>
-
-                    <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-                      <div className="h-12 w-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
-                        <DollarSign
-                          size={20}
-                          className="text-blue-600 dark:text-blue-400"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                          Salary
-                        </p>
-                        <p className="font-semibold text-gray-900 dark:text-white">
-                          {formatSalary(job.salary)}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-                      <div className="h-12 w-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
-                        <Users
-                          size={20}
-                          className="text-green-600 dark:text-green-400"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                          Openings
-                        </p>
-                        <p className="font-semibold text-gray-900 dark:text-white">
-                          {job.openings} positions
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Job Description */}
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-lg bg-linear-to-r from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 flex items-center justify-center">
-                        <FileText
-                          size={20}
-                          className="text-purple-600 dark:text-purple-400"
-                        />
-                      </div>
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Job Description
-                      </h2>
-                    </div>
-
-                    <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-                      <div className="prose dark:prose-invert max-w-none">
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-                          {job.description}
-                        </p>
-                      </div>
+                    <div className="flex items-center gap-1.5">
+                      <MapPin size={16} />
+                      <span className="text-sm">{job.location}</span>
                     </div>
                   </div>
                 </div>
-              </Card>
 
-              {/* Applications Section (for recruiters only) */}
-              {user && job && user.user_id === job.posted_by_recruiter_id && (
-                <div className="mt-12">
-                  <Card className="p-6 border border-gray-200 dark:border-gray-800">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                      <div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                          Applications
-                        </h2>
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {jobApplication?.length || 0} total applications
-                        </p>
+                {/* Apply Button */}
+                {user?.role === "jobseeker" && (
+                  <div className="w-full md:w-auto">
+                    {isApplied ? (
+                      <div className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/5 text-emerald-600 border border-emerald-100 dark:border-emerald-500/20 text-sm font-bold">
+                        <CheckCircle2 size={18} /> Déjà Postulé
                       </div>
-
-                      <div className="flex items-center gap-3">
-                        <Select
-                          value={filterStatus}
-                          onValueChange={setFilterStatus}
-                        >
-                          <SelectTrigger className="w-45">
-                            <SelectValue placeholder="Filter by status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="All">All status</SelectItem>
-                            <SelectItem value="Submitted">Submitted</SelectItem>
-                            <SelectItem value="Rejected">Rejected</SelectItem>
-                            <SelectItem value="Hired">Hired</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    {jobApplication && jobApplication.length > 0 ? (
-                      <>
-                        <div className="space-y-4">
-                          {filteredApplication?.map((application) => (
-                            <Card
-                              key={application.applicant_id}
-                              className="p-5 border border-gray-200 dark:border-gray-800"
-                            >
-                              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                                <div>
-                                  <div className="flex items-center gap-3 mb-2">
-                                    <Badge
-                                      className={`px-3 py-1 rounded-full text-sm ${
-                                        application.status === "Hired"
-                                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-                                          : application.status === "Rejected"
-                                            ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                                            : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                                      }`}
-                                    >
-                                      {application.status}
-                                    </Badge>
-                                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                                      Applied on{" "}
-                                      {new Date(
-                                        application.applied_at,
-                                      ).toLocaleDateString()}
-                                    </span>
-                                  </div>
-
-                                  <div className="flex items-center gap-4 flex-wrap">
-                                    <Link
-                                      target="_blank"
-                                      href={application.resume}
-                                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium"
-                                    >
-                                      <FileText size={16} />
-                                      View Resume
-                                    </Link>
-
-                                    <Link
-                                      target="_blank"
-                                      href={`/account/${application.applicant_id}`}
-                                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium"
-                                    >
-                                      <UserCircle size={16} />
-                                      View Profile
-                                    </Link>
-                                  </div>
-                                </div>
-
-                                {/* Status Update Section */}
-                                <div className="flex gap-3">
-                                  <Select
-                                    value={statusValue}
-                                    onValueChange={setStatusValue}
-                                  >
-                                    <SelectTrigger className="w-35">
-                                      <SelectValue placeholder="Update status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="Submitted">
-                                        Submitted
-                                      </SelectItem>
-                                      <SelectItem value="Rejected">
-                                        Rejected
-                                      </SelectItem>
-                                      <SelectItem value="Hired">
-                                        Hired
-                                      </SelectItem>
-                                    </SelectContent>
-                                  </Select>
-
-                                  <Button
-                                    onClick={() =>
-                                      updateApplicationHandler(
-                                        application.application_id,
-                                      )
-                                    }
-                                    disabled={!statusValue}
-                                    className="bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-                                  >
-                                    Update
-                                  </Button>
-                                </div>
-                              </div>
-                            </Card>
-                          ))}
-                        </div>
-
-                        {filteredApplication?.length === 0 && (
-                          <div className="text-center py-12">
-                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
-                              <Users size={24} className="text-gray-400" />
-                            </div>
-                            <p className="text-gray-600 dark:text-gray-400">
-                              No applications with status &quot;{filterStatus}
-                              &quot;
-                            </p>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="text-center py-12">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
-                          <Users size={24} className="text-gray-400" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                          No applications yet
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-400">
-                          Candidates will appear here when they apply
-                        </p>
-                      </div>
+                    ) : job.is_active && (
+                      <Button onClick={handleApply} disabled={btnLoading || isApplying} className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold gap-2 shadow-lg shadow-blue-600/20">
+                        {isApplying ? "Chargement..." : "Postuler"} <ChevronRight size={18} />
+                      </Button>
                     )}
-                  </Card>
+                  </div>
+                )}
+              </div>
+
+              {/* Stats Bar - Compact */}
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-slate-100 dark:border-slate-800">
+                <div className="text-center md:text-left">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Salaire</p>
+                  <p className="text-sm font-black text-slate-800 dark:text-slate-200">{formatSalary(job.salary)}</p>
                 </div>
-              )}
+                <div className="text-center md:text-left">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Places</p>
+                  <p className="text-sm font-black text-slate-800 dark:text-slate-200">{job.openings} Postes</p>
+                </div>
+                <div className="text-center md:text-left">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Date</p>
+                  <p className="text-sm font-black text-slate-800 dark:text-slate-200">Aujourd'hui</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Description Section */}
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 p-6 md:p-8">
+            <h3 className="text-sm font-black uppercase tracking-widest text-blue-600 mb-4 flex items-center gap-2">
+              <FileText size={16} /> Détails du poste
+            </h3>
+            <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-base whitespace-pre-line">
+              {job.description}
+            </p>
+          </div>
+
+          {/* Recruiter View: Applications */}
+          {user && job && user.user_id === job.posted_by_recruiter_id && (
+            <div className="space-y-6 pt-6">
+              <div className="flex items-center justify-between px-2">
+                <h2 className="text-xl font-black dark:text-white">Candidatures reçues</h2>
+                <Select value={filterStatus} onValueChange={setFilterStatus}>
+                  <SelectTrigger className="w-[140px] h-9 text-xs font-bold rounded-lg border-slate-200 dark:border-slate-800">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">Tous</SelectItem>
+                    <SelectItem value="Submitted">Nouveaux</SelectItem>
+                    <SelectItem value="Rejected">Refusés</SelectItem>
+                    <SelectItem value="Hired">Acceptés</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-3">
+                {filteredApplication && filteredApplication.length > 0 ? (
+                  filteredApplication.map((app) => (
+                    <Card key={app.applicant_id} className="p-4 rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                            <UserCircle size={24} />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-black">Candidat #{app.applicant_id}</h4>
+                            <p className="text-[10px] text-slate-500">{new Date(app.applied_at).toLocaleDateString()}</p>
+                          </div>
+                          <Badge className="text-[10px] h-5">{app.status}</Badge>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Link target="_blank" href={app.resume} className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-600 hover:text-blue-600">
+                            <FileText size={18} />
+                          </Link>
+                          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 p-1 rounded-xl border border-slate-100 dark:border-slate-800">
+                            <Select value={statusValue} onValueChange={setStatusValue}>
+                              <SelectTrigger className="h-8 w-[100px] text-[10px] font-bold border-none bg-transparent">
+                                <SelectValue placeholder="Action" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Submitted">En cours</SelectItem>
+                                <SelectItem value="Rejected">Refusé</SelectItem>
+                                <SelectItem value="Hired">Accepté</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Button size="sm" onClick={() => updateApplicationHandler(app.application_id)} disabled={!statusValue} className="h-7 text-[10px] font-bold bg-slate-900 dark:bg-white dark:text-slate-900">
+                              OK
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-[2rem] border border-dashed border-slate-200 dark:border-slate-800">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Aucune candidature</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );

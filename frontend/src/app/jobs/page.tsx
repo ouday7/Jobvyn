@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { job_service_url } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
-import { Filter, MapPin, Search, X, Sparkles, TrendingUp } from "lucide-react";
+import { Filter, MapPin, Search, X, Sparkles, TrendingUp, Briefcase } from "lucide-react";
 import Loading from "@/components/loading";
 import JobsCard from "@/components/jobsCard";
 import {
@@ -20,14 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const locations = [
-  "Remote",
-  "Delhi",
-  "Mumbai",
-  "Bengaluru",
-  "Hyderabad",
-  "Pune",
-  "Kolkata",
-  "Chennai",
+  "Remote", "Tunis", "Sousse", "Sfax", "Nabeul", "Bizerte", "Monastir", "Gabes"
 ];
 
 const JobsPage = () => {
@@ -72,102 +65,73 @@ const JobsPage = () => {
       : jobs;
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Controls Section */}
-        <div className="sticky top-4 z-10 mb-8">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border shadow-sm p-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search by Job Title or role"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="pl-10 h-12 border-gray-300 dark:border-gray-700 rounded-xl"
-                  />
-                </div>
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 animate-in fade-in duration-700" dir="rtl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        {/* --- Hero Header Section --- */}
+        <div className="mb-12 text-right">
+            <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">
+                لوّج على <span className="text-blue-600">فرصة أحلامك</span> توّة
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">أكثر من {jobs.length} عرض شغل يستنى فيك</p>
+        </div>
+
+        {/* --- Sticky Search & Filters --- */}
+        <div className="sticky top-6 z-20 mb-10">
+          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-[2.5rem] border border-white/20 dark:border-slate-800 shadow-2xl p-4 transition-all">
+            <div className="flex flex-col lg:flex-row items-center gap-4">
+              
+              {/* Search Input */}
+              <div className="relative flex-1 w-full">
+                <Search className="absolute right-5 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-500" />
+                <Input
+                  placeholder="لوّج بالوظيفة، الشركة، أو الـ Keywords..."
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="pr-12 h-14 bg-white dark:bg-slate-950 border-slate-100 dark:border-slate-800 rounded-[1.8rem] text-sm font-bold shadow-sm focus:ring-2 focus:ring-blue-500 transition-all text-right"
+                />
               </div>
 
-              <div className="flex items-center gap-3">
-                <Tabs
-                  value={activeTab}
-                  onValueChange={setActiveTab}
-                  className="hidden sm:block"
-                >
-                  <TabsList className="bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-                    <TabsTrigger value="all" className="rounded-md px-4">
-                      All Jobs
-                    </TabsTrigger>
-                    <TabsTrigger value="remote" className="rounded-md px-4">
-                      Remote
-                    </TabsTrigger>
+              {/* Filters Group */}
+              <div className="flex flex-wrap items-center justify-center gap-3 w-full lg:w-auto">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-2xl border border-slate-100 dark:border-slate-800">
+                  <TabsList className="bg-transparent h-10">
+                    <TabsTrigger value="all" className="rounded-xl px-6 font-bold text-xs data-[state=active]:bg-white dark:data-[state=active]:bg-slate-950 data-[state=active]:shadow-sm">كل العروض</TabsTrigger>
+                    <TabsTrigger value="remote" className="rounded-xl px-6 font-bold text-xs data-[state=active]:bg-white dark:data-[state=active]:bg-slate-950">عن بُعد (Remote)</TabsTrigger>
                   </TabsList>
                 </Tabs>
 
                 <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
                   <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="gap-2 h-12 px-4 rounded-xl border-gray-300 dark:border-gray-700"
-                    >
-                      <Filter className="h-4 w-4" />
-                      Location
-                      {location && (
-                        <div className="h-1.5 w-1.5 rounded-full bg-purple-600" />
-                      )}
+                    <Button variant="outline" className="h-14 px-6 rounded-[1.8rem] border-slate-200 dark:border-slate-800 font-bold gap-2 hover:bg-slate-50">
+                      <MapPin size={18} className="text-orange-500" />
+                      {location || "الولايات"}
+                      {location && <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />}
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-md rounded-2xl">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl">
-                        Filter by Location
-                      </DialogTitle>
-                    </DialogHeader>
-                    <div className="py-4">
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        <button
-                          onClick={() => setLocation("")}
-                          className={`p-3 rounded-xl border text-sm font-medium transition-all ${
-                            !location
-                              ? "border-purple-600 bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300"
-                              : "border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700"
-                          }`}
-                        >
-                          All Locations
-                        </button>
-                        {locations.map((loc) => (
+                  <DialogContent className="sm:max-w-lg rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl" dir="rtl">
+                    <div className="bg-slate-900 p-6 text-white flex items-center gap-3">
+                        <MapPin className="text-orange-500" />
+                        <DialogTitle className="text-lg font-bold">إختيار الولاية</DialogTitle>
+                    </div>
+                    <div className="p-8">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+                        {["All", ...locations].map((loc) => (
                           <button
                             key={loc}
-                            onClick={() => setLocation(loc)}
-                            className={`p-3 rounded-xl border text-sm font-medium transition-all ${
-                              location === loc
-                                ? "border-purple-600 bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300"
-                                : "border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700"
+                            onClick={() => setLocation(loc === "All" ? "" : loc)}
+                            className={`p-4 rounded-2xl border-2 text-xs font-black transition-all ${
+                              (location === loc || (loc === "All" && !location))
+                                ? "border-blue-600 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                                : "border-slate-100 dark:border-slate-800 hover:border-slate-200"
                             }`}
                           >
-                            {loc}
+                            {loc === "All" ? "كل تونس" : loc}
                           </button>
                         ))}
                       </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setLocation("");
-                          setIsFilterOpen(false);
-                        }}
-                        className="flex-1 rounded-xl"
-                      >
-                        Clear
-                      </Button>
-                      <Button
-                        onClick={() => setIsFilterOpen(false)}
-                        className="flex-1 bg-purple-600 hover:bg-purple-700 rounded-xl"
-                      >
-                        Apply
+                      <Button onClick={() => setIsFilterOpen(false)} className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-lg shadow-blue-500/20">
+                        تطبيق الفلتر
                       </Button>
                     </div>
                   </DialogContent>
@@ -175,115 +139,67 @@ const JobsPage = () => {
               </div>
             </div>
 
-            {/* Active Filters */}
+            {/* Active Badges */}
             {hasActiveFilters && (
-              <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    Active filters:
-                  </span>
-                  {title && (
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm">
-                      <Search className="h-3 w-3" />
-                      {title}
-                      <button
-                        title="setTitle"
-                        onClick={() => setTitle("")}
-                        className="ml-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-0.5"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  )}
-                  {location && (
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm">
-                      <MapPin className="h-3 w-3" />
-                      {location}
-                      <button
-                        title="setLoc"
-                        onClick={() => setLocation("")}
-                        className="ml-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-0.5"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  )}
-                </div>
+              <div className="mt-4 pt-4 border-t border-slate-50 dark:border-slate-800 flex flex-wrap gap-2">
+                {title && <FilterBadge icon={<Search size={12}/>} text={title} onClear={() => setTitle("")} />}
+                {location && <FilterBadge icon={<MapPin size={12}/>} text={location} onClear={() => setLocation("")} />}
               </div>
             )}
           </div>
         </div>
 
-        {/* Stats Bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-green-600" />
-                <span>{filteredJobs.length} matching positions</span>
-              </div>
-              {activeTab === "remote" && (
-                <div className="px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300">
-                  Remote Only
-                </div>
-              )}
+        {/* --- Stats & Clear --- */}
+        <div className="flex items-center justify-between mb-8 px-4">
+            <div className="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 px-4 py-2 rounded-full border border-green-100 dark:border-green-900/30">
+                <TrendingUp size={16} className="text-green-600" />
+                <span className="text-sm font-black text-green-700 dark:text-green-400">{filteredJobs.length} فرصة عمل متاحة حالياً</span>
             </div>
-            <button
-              onClick={clearFilters}
-              className={`text-sm transition-colors ${
-                hasActiveFilters
-                  ? "text-purple-600 hover:text-purple-700"
-                  : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              }`}
-            >
-              Clear all filters
-            </button>
-          </div>
+            {hasActiveFilters && (
+                <button onClick={clearFilters} className="text-xs font-bold text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1">
+                    <X size={14} /> مسح كل الفلاتر
+                </button>
+            )}
         </div>
 
-        {/* Jobs Grid */}
+        {/* --- Content Grid --- */}
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="text-center">
-              <Loading />
-              <p className="mt-4 text-gray-500 dark:text-gray-400">
-                Loading opportunities...
-              </p>
-            </div>
+          <div className="flex flex-col justify-center items-center py-32">
+            <Loading />
+            <p className="mt-6 text-slate-400 font-bold animate-pulse text-sm">قاعدين نلوجولك على أحسن العروض...</p>
           </div>
         ) : filteredJobs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredJobs.map((job) => (
-              <JobsCard key={job.job_id} job={job} />
+              <div key={job.job_id} className="transform hover:-translate-y-2 transition-transform duration-300">
+                 <JobsCard job={job} />
+              </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gray-100 dark:bg-gray-800 mb-6">
-              <Search className="h-10 w-10 text-gray-400" />
+          <div className="text-center py-32 bg-white dark:bg-slate-900 rounded-[3rem] border-2 border-dashed border-slate-100 dark:border-slate-800">
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] bg-slate-50 dark:bg-slate-800 mb-6 text-slate-300">
+              <Briefcase size={40} />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              No matches found
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              Try adjusting your search terms or filters to find more
-              opportunities
-            </p>
-            {hasActiveFilters && (
-              <Button
-                onClick={clearFilters}
-                variant="outline"
-                className="gap-2 rounded-xl"
-              >
-                <X className="h-4 w-4" />
-                Clear all filters
-              </Button>
-            )}
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">مالقينا حتى شي!</h3>
+            <p className="text-slate-500 dark:text-slate-400 font-medium mb-8">جرب بدل الكلمات اللي تلوج بيها أو نحي شويا فلاتر.</p>
+            <Button onClick={clearFilters} variant="outline" className="rounded-2xl px-10 h-14 font-bold border-2">إعادة البحث</Button>
           </div>
         )}
       </div>
     </div>
   );
 };
+
+// Helper Components
+const FilterBadge = ({ icon, text, onClear }: { icon: any, text: string, onClear: () => void }) => (
+  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs font-bold border border-blue-100 dark:border-blue-800">
+    {icon}
+    {text}
+    <button onClick={onClear} className="hover:text-red-500 transition-colors mr-1">
+      <X size={14} />
+    </button>
+  </div>
+);
 
 export default JobsPage;

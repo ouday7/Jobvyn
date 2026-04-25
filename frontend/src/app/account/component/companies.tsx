@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use Client";
+"use client";
 
 import React, { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
@@ -8,7 +8,16 @@ import { job_service_url, useAppData } from "@/context/AppContext";
 import toast from "react-hot-toast";
 import Loading from "@/components/loading";
 import { Card } from "@/components/ui/card";
-import { Building2, Eye, Globe, Plus, Trash2 } from "lucide-react";
+import { 
+  Building2, 
+  Eye, 
+  Globe, 
+  Plus, 
+  Trash2, 
+  ExternalLink, 
+  ShieldCheck,
+  Briefcase
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Company } from "@/type";
 import Link from "next/link";
@@ -26,9 +35,8 @@ import Image from "next/image";
 
 const Companies = () => {
   const addRef = useRef<HTMLButtonElement | null>(null);
-  const openDialog = () => {
-    addRef.current?.click();
-  };
+  const openDialog = () => addRef.current?.click();
+  
   const { loading } = useAppData();
   const [name, setName] = useState("");
   const [description, setDiscription] = useState("");
@@ -48,17 +56,15 @@ const Companies = () => {
   const token = Cookies.get("token");
 
   async function fetchCompanies() {
+    setCompanyLoading(true);
     try {
-      const { data } = await axios.get(
-        `${job_service_url}/api/job/company/all`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-
-      setCompanies(data.companies);
+      const { data } = await axios.get(`${job_service_url}/api/job/company/all`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // تصليح: نثبتوا إذا البيانات في data.companies أو data مباشرة
+      setCompanies(data.companies || data || []);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching companies:", error);
     } finally {
       setCompanyLoading(false);
     }
@@ -66,7 +72,7 @@ const Companies = () => {
 
   async function addCompaniesHandler() {
     if (!name || !description || !website || !logo) {
-      toast.error("Please Provide All Details");
+      toast.error("يرجى إكمال جميع البيانات");
       return;
     }
 
@@ -74,46 +80,38 @@ const Companies = () => {
     formData.append("name", name);
     formData.append("description", description);
     formData.append("website", website);
-    formData.append("file", logo as File);
+    formData.append("file", logo);
 
     try {
       setBtnLoading(true);
-      const { data } = await axios.post(
-        `${job_service_url}/api/job/company/new`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      await axios.post(`${job_service_url}/api/job/company/new`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data" 
         },
-      );
-      toast.success(data.message);
+      });
+      toast.success("تمت إضافة الشركة بنجاح");
       clearData();
       fetchCompanies();
+      addRef.current?.click(); 
     } catch (error: any) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "فشل في الإضافة");
     } finally {
       setBtnLoading(false);
     }
   }
 
   async function deleteCompaniesHandler(id: string) {
-    if (confirm("Are you sure you want to delete this company")) {
+    if (confirm("هل أنت متأكد من حذف هذه الشركة؟")) {
       try {
         setBtnLoading(true);
-        const { data } = await axios.delete(
-          `${job_service_url}/api/job/company/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        toast.success(data.message);
+        const { data } = await axios.delete(`${job_service_url}/api/job/company/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        toast.success(data.message || "تم الحذف بنجاح");
         fetchCompanies();
       } catch (error: any) {
-        toast.error(error.response.data.message);
+        toast.error(error.response?.data?.message || "فشل الحذف");
       } finally {
         setBtnLoading(false);
       }
@@ -121,230 +119,197 @@ const Companies = () => {
   }
 
   useEffect(() => {
-    fetchCompanies();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (token) fetchCompanies();
+  }, [token]);
 
   if (loading) return <Loading />;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-      {/* Header - Compact */}
-      <div className="mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-          <div>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-              My Companies
-            </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-              {companies.length}/4 companies registered
-            </p>
-          </div>
-          {companies.length < 4 && (
-            <Button
-              onClick={openDialog}
-              className="gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 h-9"
-              size="sm"
-            >
-              <Plus size={16} />
-              Add Company
-            </Button>
-          )}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 bg-slate-50/50 dark:bg-transparent min-h-screen">
+      
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
+            <Building2 className="text-blue-600" size={32} />
+            شركاتي
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">
+             لقد قمت بتسجيل <span className="text-blue-600 font-bold">{companies.length}</span> من أصل <span className="font-bold">4</span> شركات مسموحة.
+          </p>
         </div>
+        
+        {companies.length < 4 && (
+          <Button
+            onClick={openDialog}
+            className="rounded-2xl bg-blue-600 hover:bg-blue-700 h-12 px-6 font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105"
+          >
+            <Plus className="mr-2" size={20} /> إضافة شركة جديدة
+          </Button>
+        )}
       </div>
 
-      {/* Companies List - Compact Layout */}
       {companyLoading ? (
-        <Loading />
+        <div className="flex justify-center py-20"><Loading /></div>
       ) : (
-        <>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {companies.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {companies.map((c) => (
-                <Card
-                  key={c.company_id}
-                  className="border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow transition-shadow"
-                >
-                  <div className="p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      {/* Logo and Basic Info */}
-                      <div className="flex items-start gap-3 flex-1 min-w-0">
-                        <div className="h-12 w-12 relative rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-800 shrink-0">
-                          <Image
-                            src={c.logo}
-                            alt={c.name}
-                            fill
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+            companies.map((c) => (
+              <Card
+                key={c.company_id}
+                className="group relative border-none bg-white dark:bg-slate-900 shadow-xl shadow-slate-200/50 dark:shadow-none rounded-[2rem] overflow-hidden transition-all hover:-translate-y-1"
+              >
+                <div className="p-6 sm:p-8 flex items-start gap-6">
+                  <div className="relative h-20 w-20 shrink-0 rounded-[1.5rem] bg-slate-100 dark:bg-slate-800 border-2 border-slate-50 dark:border-slate-800 p-2 overflow-hidden shadow-inner">
+                    <Image
+                      src={c.logo}
+                      alt={c.name}
+                      fill
+                      className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
+                    />
+                  </div>
 
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1">
-                            <h3 className="font-semibold text-slate-900 dark:text-white truncate">
-                              {c.name}
-                            </h3>
-                          </div>
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate">
+                        {c.name}
+                      </h3>
+                      <ShieldCheck size={16} className="text-blue-500 shrink-0" />
+                    </div>
 
-                          <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 line-clamp-2">
-                            {c.description}
-                          </p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">
+                      {c.description}
+                    </p>
 
-                          <div className="flex items-center gap-2">
-                            <Globe
-                              size={12}
-                              className="text-slate-400 shrink-0"
-                            />
-                            <Link
-                              href={c.website}
-                              target="_blank"
-                              className="text-xs text-blue-600 dark:text-blue-400 hover:underline truncate"
-                              title={c.website}
-                            >
-                              {c.website.replace(/^https?:\/\//, "")}
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Actions - Compact */}
-                      <div className="flex flex-col gap-1 shrink-0">
-                        <Link href={`/company/${c.company_id}`}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 cursor-pointer"
-                            title="View Details"
-                          >
-                            <Eye size={14} />
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer"
-                          onClick={() => deleteCompaniesHandler(c.company_id)}
-                          title="Delete Company"
-                        >
-                          <Trash2 size={14} />
-                        </Button>
-                      </div>
+                    <div className="pt-2 flex items-center gap-4">
+                      <Link
+                        href={c.website.startsWith('http') ? c.website : `https://${c.website}`}
+                        target="_blank"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors"
+                      >
+                        <Globe size={14} />
+                        {c.website.replace(/^https?:\/\//, "")}
+                        <ExternalLink size={12} className="opacity-50" />
+                      </Link>
                     </div>
                   </div>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            /* Empty State - Compact */
-            <Card className="border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="p-8 text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 mb-3">
-                  <Building2
-                    className="text-slate-400 dark:text-slate-600"
-                    size={24}
-                  />
+
+                  <div className="flex flex-col gap-2">
+                    <Link href={`/company/${c.company_id}`}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full bg-slate-50 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-600 dark:text-slate-400 hover:text-blue-600"
+                      >
+                        <Eye size={18} />
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => deleteCompaniesHandler(c.company_id)}
+                      className="rounded-full bg-slate-50 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-600 dark:text-slate-400 hover:text-red-600"
+                    >
+                      <Trash2 size={18} />
+                    </Button>
+                  </div>
                 </div>
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
-                  No Companies Yet
-                </h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 max-w-sm mx-auto">
-                  Add your first company to start posting jobs
-                </p>
-                {companies.length < 4 && (
-                  <Button
-                    onClick={openDialog}
-                    className="gap-2 cursor-pointer bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    size="sm"
-                  >
-                    <Plus size={16} />
-                    Add Company
-                  </Button>
-                )}
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-full py-20 flex flex-col items-center text-center">
+              <div className="w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6">
+                <Briefcase size={40} className="text-slate-300" />
               </div>
-            </Card>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">لا توجد شركات مسجلة</h3>
+              <p className="text-slate-500 mt-2 max-w-xs">ابدأ بإضافة شركتك الأولى لتتمكن من نشر الوظائف.</p>
+            </div>
           )}
-        </>
+        </div>
       )}
 
-      {/* Add Company Dialog - Compact */}
       <Dialog>
         <DialogTrigger asChild>
           <Button className="hidden" ref={addRef}></Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">
-              Add New Company
+        <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] p-8 border-none bg-white dark:bg-slate-900 shadow-2xl">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="text-2xl font-black text-right flex items-center gap-3 justify-end">
+              إضافة شركة جديدة
+              <div className="h-10 w-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                <Plus size={24} className="text-blue-600" />
+              </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-3 py-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="name" className="text-sm">
-                Company Name
-              </Label>
+          
+          <div className="space-y-5 py-2" dir="rtl">
+            <div className="space-y-2">
+              <Label className="text-sm font-bold pr-1 text-right block">اسم الشركة</Label>
               <Input
-                id="name"
-                placeholder="Enter company name"
+                placeholder="مثلاً: شركة آبل تونس"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="h-9 text-sm"
+                className="h-12 rounded-xl bg-slate-50 dark:bg-slate-800 border-none focus-visible:ring-2 focus-visible:ring-blue-500 text-right"
               />
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="description" className="text-sm">
-                Description
-              </Label>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-bold pr-1 text-right block">وصف الشركة</Label>
               <textarea
-                id="description"
-                placeholder="Brief description..."
+                placeholder="اكتب نبذة مختصرة عن نشاط الشركة..."
                 value={description}
                 onChange={(e) => setDiscription(e.target.value)}
-                className="w-full min-h-20 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-800 bg-transparent text-sm resize-none"
+                className="w-full min-h-[100px] px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none text-right"
               />
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="website" className="text-sm">
-                Website URL
-              </Label>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-bold pr-1 text-right block">الموقع الإلكتروني</Label>
               <Input
-                id="website"
                 type="url"
-                placeholder="https://company.com"
+                placeholder="https://example.com"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
-                className="h-9 text-sm"
+                className="h-12 rounded-xl bg-slate-50 dark:bg-slate-800 border-none focus-visible:ring-2 focus-visible:ring-blue-500 text-right"
               />
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="logo" className="text-sm">
-                Company Logo
-              </Label>
-              <Input
-                id="logo"
-                type="file"
-                accept="image/*"
-                className="h-9 cursor-pointer text-sm"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setLogo(e.target.files?.[0] || null)
-                }
-              />
+
+            <div className="space-y-2">
+              <Label className="text-sm font-bold pr-1 text-right block">شعار الشركة (Logo)</Label>
+              <div className="relative group border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-4 transition-colors hover:border-blue-400">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setLogo(e.target.files?.[0] || null)
+                  }
+                />
+                <div className="flex flex-col items-center gap-2">
+                  <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <Plus className="text-slate-400" />
+                  </div>
+                  <span className="text-xs text-slate-500 font-medium">
+                    {logo ? logo.name : "اضغط هنا لرفع الشعار"}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
+
+          <DialogFooter className="mt-8 flex gap-3">
+             <Button
+              variant="ghost"
               onClick={clearData}
-              className="h-9 text-sm"
-              size="sm"
+              className="flex-1 h-12 rounded-xl font-bold"
             >
-              Clear
+              مسح البيانات
             </Button>
             <Button
               disabled={btnLoading}
               onClick={addCompaniesHandler}
-              className="h-9 text-sm bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-              size="sm"
+              className="flex-1 h-12 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-lg shadow-blue-200 dark:shadow-none transition-all"
             >
-              {btnLoading ? "Saving..." : "Add Company"}
+              {btnLoading ? "جاري الحفظ..." : "تأكيد الإضافة"}
             </Button>
           </DialogFooter>
         </DialogContent>

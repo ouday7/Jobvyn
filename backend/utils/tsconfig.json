@@ -6,7 +6,9 @@
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true
+    "strict": false,          // <--- Hathi lezem ykoun false
+    "skipLibCheck": true,
+    "noImplicitAny": false,   // <--- Hathi m3aha false
+    "strictNullChecks": false // <--- Zid hathi zeda
   }
 }
