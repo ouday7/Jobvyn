@@ -3,7 +3,6 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import dotenv from "dotenv";
 import { sql } from "../utils/db.js";
 
-// Load the environment
 dotenv.config();
 
 interface User {
@@ -11,7 +10,7 @@ interface User {
   name: string;
   email: string;
   phone_number: string;
-  role: "jobseeker" | "recruiter";
+  role: "jobseeker" | "recruiter" | "freelancer";
   bio: string | null;
   resume: string | null;
   resume_public_id: string | null;
@@ -24,6 +23,7 @@ interface User {
   education_type: string | null;
   has_permis: boolean;
   permis_type: string | null;
+  activity: string | null;
   created_at: Date;
   skills: string[];
 }
@@ -68,7 +68,7 @@ export const isAuthenticated = async (
       return;
     }
 
-    // Fetch ALL user values from database via Neon
+    // Fetch ALL user values from database
     const users = await sql`
         SELECT 
             u.user_id, 
@@ -88,6 +88,7 @@ export const isAuthenticated = async (
             u.education_type,
             u.has_permis,
             u.permis_type,
+            u.activity,
             u.created_at,
             ARRAY_AGG(s.name) FILTER (WHERE s.name IS NOT NULL) as skills
         FROM users u
@@ -95,24 +96,10 @@ export const isAuthenticated = async (
         LEFT JOIN skills s ON us.skill_id = s.skill_id
         WHERE u.user_id = ${decodedPayload.id}
         GROUP BY 
-            u.user_id, 
-            u.name, 
-            u.email, 
-            u.phone_number, 
-            u.role, 
-            u.bio, 
-            u.resume, 
-            u.resume_public_id, 
-            u.profile_pic, 
-            u.profile_pic_public_id, 
-            u.subscription,
-            u.wilaya,
-            u.moatmadia,
-            u.specialty,
-            u.education_type,
-            u.has_permis,
-            u.permis_type,
-            u.created_at;
+            u.user_id, u.name, u.email, u.phone_number, u.role, u.bio, 
+            u.resume, u.resume_public_id, u.profile_pic, u.profile_pic_public_id, 
+            u.subscription, u.wilaya, u.moatmadia, u.specialty, u.education_type,
+            u.has_permis, u.permis_type, u.activity, u.created_at
     `;
 
     if (users.length === 0) {

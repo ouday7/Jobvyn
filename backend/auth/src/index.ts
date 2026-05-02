@@ -14,6 +14,7 @@ redisClient
   .connect()
   .then(() => console.log("connected to redis"))
   .catch(console.error);
+  
 async function initDb() {
   try {
     await sql`
@@ -24,7 +25,7 @@ async function initDb() {
         FROM pg_type 
         WHERE typname = 'user_role'
       ) THEN
-        CREATE TYPE user_role AS ENUM ('jobseeker', 'recruiter');
+        CREATE TYPE user_role AS ENUM ('jobseeker', 'recruiter', 'freelancer');
       END IF;
     END$$;      
     `;
@@ -43,8 +44,14 @@ async function initDb() {
         profile_pic VARCHAR(225),
         profile_pic_public_id VARCHAR(225),
         created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        subscription TIMESTAMPTZ
-
+        subscription TIMESTAMPTZ,
+        wilaya VARCHAR(100),
+        moatmadia VARCHAR(100),
+        specialty VARCHAR(255),
+        education_type VARCHAR(50),
+        has_permis BOOLEAN DEFAULT false,
+        permis_type VARCHAR(50),
+        activity VARCHAR(255)
     )
     `;
 

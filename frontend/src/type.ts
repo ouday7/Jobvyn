@@ -52,26 +52,25 @@ export interface ResumeAnalysisResponse {
   summary: string;
 }
 
-// -- User Interface المصلحة --
 export interface User {
   user_id: number;
   name: string;
   email: string;
   phone_number: string;
-  role: "jobseeker" | "recruiter";
+  role: "jobseeker" | "recruiter" | "freelancer";  // 👈 zidna freelancer
   bio: string | null;
   resume: string | null;
   resume_public_id: string | null;
   profile_pic: string | null;
   profile_pic_public_id: string | null;
   subscription: string | null;
-  // زدنا الحقول هذي باش يتنحو الـ Red Lines في Info.tsx
-  wilaya?: string | null;
-  moatmadia?: string | null;
-  specialty?: string | null;
-  education_type?: string | null;
-  has_permis?: boolean;
-  permis_type?: string | null;
+  wilaya: string | null;
+  moatmadia: string | null;
+  specialty: string | null;
+  education_type: string | null;
+  has_permis: boolean;
+  permis_type: string | null;
+  activity: string | null;  // 👈 jdid (pour freelancer)
   skills?: string[];
 }
 

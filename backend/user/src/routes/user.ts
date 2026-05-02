@@ -5,6 +5,8 @@ import {
   applyForJob,
   deleteSkillFromUser,
   getAllApplication,
+  getAllFreelancers,
+  getFreelancerById,
   getUserProfile,
   myProfile,
   updateProfilePic,
@@ -15,6 +17,11 @@ import uploadFile from "../middleware/multer.js";
 
 const userRoutes = express.Router();
 
+// Routes des freelancers (publiques)
+userRoutes.get("/freelancers/all", getAllFreelancers);
+userRoutes.get("/freelancers/:id", getFreelancerById);
+
+// Routes protégées
 userRoutes.get("/me", isAuthenticated, myProfile);
 userRoutes.get("/:userId", isAuthenticated, getUserProfile);
 userRoutes.put("/update/profile", isAuthenticated, updateUserProfile);
@@ -29,4 +36,5 @@ userRoutes.post("/skill/add", isAuthenticated, addSkillToUser);
 userRoutes.put("/skill/delete", isAuthenticated, deleteSkillFromUser);
 userRoutes.post("/apply/job", isAuthenticated, applyForJob);
 userRoutes.get("/application/all", isAuthenticated, getAllApplication);
+
 export default userRoutes;
