@@ -77,10 +77,33 @@ export const deleteSkillFromUser = TryCatch(async (req: any, res, next) => {
   });
 });
 
-// 4. Update User Profile
+// 4. Update User Profile (متكاملة مع جميع حقول freelancer)
 export const updateUserProfile = TryCatch(async (req: any, res, next) => {
   const user = req.user;
-  const { name, phoneNumber, bio, wilaya, moatmadia, specialty, education_type, has_permis, permis_type, activity } = req.body;
+  const { 
+    name, phoneNumber, bio, wilaya, moatmadia, specialty, education_type, 
+    has_permis, permis_type, activity,
+    years_experience, available_now, hourly_rate, work_radius,
+    languages, portfolio, social_media, work_days, work_hours
+  } = req.body;
+
+  // معالجة hourly_rate إذا كانت فارغة أو سلسلة فارغة
+  const processedHourlyRate = (hourly_rate === "" || hourly_rate === null || hourly_rate === undefined) 
+    ? null 
+    : parseFloat(hourly_rate);
+
+  // معالجة work_radius
+  const processedWorkRadius = (work_radius !== undefined && work_radius !== "" && work_radius !== null)
+    ? parseInt(work_radius) 
+    : 20;
+
+  // معالجة years_experience
+  const processedYearsExperience = (years_experience !== undefined && years_experience !== "" && years_experience !== null)
+    ? parseInt(years_experience) 
+    : 0;
+
+  // معالجة available_now
+  const processedAvailableNow = available_now !== undefined ? available_now : true;
 
   const [updatedUser] = await sql`
     UPDATE users SET 
@@ -93,7 +116,16 @@ export const updateUserProfile = TryCatch(async (req: any, res, next) => {
       education_type = COALESCE(${education_type || null}, education_type),
       has_permis = COALESCE(${has_permis === 'yes' || has_permis === true}, has_permis),
       permis_type = COALESCE(${permis_type || null}, permis_type),
-      activity = COALESCE(${activity || null}, activity)
+      activity = COALESCE(${activity || null}, activity),
+      years_experience = COALESCE(${processedYearsExperience}, years_experience),
+      available_now = COALESCE(${processedAvailableNow}, available_now),
+      hourly_rate = ${processedHourlyRate},
+      work_radius = COALESCE(${processedWorkRadius}, work_radius),
+      languages = COALESCE(${languages}, languages),
+      portfolio = COALESCE(${portfolio}, portfolio),
+      social_media = COALESCE(${social_media}, social_media),
+      work_days = COALESCE(${work_days}, work_days),
+      work_hours = COALESCE(${work_hours}, work_hours)
     WHERE user_id = ${user.user_id}
     RETURNING *
   `;

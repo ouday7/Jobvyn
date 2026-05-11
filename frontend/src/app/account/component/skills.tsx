@@ -37,7 +37,6 @@ const Skills: React.FC<AccountProps> = ({ isYourAccount, user }) => {
   };
 
   const removeSkillHandler = (skillToRemove: string) => {
-    // حذف مباشر لتسريع التجربة (UX)
     removeSkill(skillToRemove);
   };
 

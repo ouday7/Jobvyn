@@ -83,7 +83,7 @@ const AppliedJobs: React.FC<AppliedJobsProps> = ({ applications }) => {
         {/* List Section */}
         <div className="divide-y divide-slate-100 dark:divide-slate-800">
           {applications && applications.length > 0 ? (
-            applications.map((a: any) => { // Use any temporarily if type isn't updated yet
+            applications.map((a: any) => {
               const status = getStatusConfig(a.status);
               const appIdString = String(a.application_id);
               
@@ -108,7 +108,7 @@ const AppliedJobs: React.FC<AppliedJobsProps> = ({ applications }) => {
 
                       <div className="space-y-1 truncate text-right sm:text-left" dir="rtl">
                         <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors truncate">
-                          {a.title || "عنوان الوظيفة"} {/* Back to .title from JOIN */}
+                          {a.title || "عنوان الوظيفة"}
                         </h3>
                         
                         <div className="flex flex-wrap items-center gap-2 justify-end sm:justify-start">
@@ -153,7 +153,6 @@ const AppliedJobs: React.FC<AppliedJobsProps> = ({ applications }) => {
               );
             })
           ) : (
-            /* Empty State */
             <div className="py-24 text-center space-y-4">
                <div className="h-16 w-16 rounded-3xl bg-slate-50 dark:bg-slate-900 mx-auto flex items-center justify-center text-slate-200 dark:text-slate-800 border-2 border-dashed border-slate-100 dark:border-slate-800">
                   <Briefcase size={32} />

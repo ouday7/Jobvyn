@@ -61,7 +61,6 @@ const Companies = () => {
       const { data } = await axios.get(`${job_service_url}/api/job/company/all`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // تصليح: نثبتوا إذا البيانات في data.companies أو data مباشرة
       setCompanies(data.companies || data || []);
     } catch (error) {
       console.error("Error fetching companies:", error);

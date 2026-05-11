@@ -24,6 +24,18 @@ interface User {
   has_permis: boolean;
   permis_type: string | null;
   activity: string | null;
+  years_experience: number;
+  available_now: boolean;
+  hourly_rate: number;
+  work_radius: number;
+  languages: any;
+  portfolio: string | null;
+  social_media: any;
+  work_days: any;
+  work_hours: any;
+  total_jobs_completed: number;
+  total_rating: number;
+  total_reviews: number;
   created_at: Date;
   skills: string[];
 }
@@ -68,7 +80,7 @@ export const isAuthenticated = async (
       return;
     }
 
-    // Fetch ALL user values from database
+    // Fetch ALL user values from database (including freelancer fields)
     const users = await sql`
         SELECT 
             u.user_id, 
@@ -89,6 +101,18 @@ export const isAuthenticated = async (
             u.has_permis,
             u.permis_type,
             u.activity,
+            u.years_experience,
+            u.available_now,
+            u.hourly_rate,
+            u.work_radius,
+            u.languages,
+            u.portfolio,
+            u.social_media,
+            u.work_days,
+            u.work_hours,
+            u.total_jobs_completed,
+            u.total_rating,
+            u.total_reviews,
             u.created_at,
             ARRAY_AGG(s.name) FILTER (WHERE s.name IS NOT NULL) as skills
         FROM users u
@@ -99,7 +123,10 @@ export const isAuthenticated = async (
             u.user_id, u.name, u.email, u.phone_number, u.role, u.bio, 
             u.resume, u.resume_public_id, u.profile_pic, u.profile_pic_public_id, 
             u.subscription, u.wilaya, u.moatmadia, u.specialty, u.education_type,
-            u.has_permis, u.permis_type, u.activity, u.created_at
+            u.has_permis, u.permis_type, u.activity, u.years_experience,
+            u.available_now, u.hourly_rate, u.work_radius, u.languages, u.portfolio,
+            u.social_media, u.work_days, u.work_hours, u.total_jobs_completed,
+            u.total_rating, u.total_reviews, u.created_at
     `;
 
     if (users.length === 0) {
@@ -111,6 +138,16 @@ export const isAuthenticated = async (
 
     const user = users[0] as User;
     user.skills = user.skills || [];
+    user.years_experience = user.years_experience || 0;
+    user.available_now = user.available_now ?? true;
+    user.work_radius = user.work_radius || 20;
+    user.languages = user.languages || [];
+    user.social_media = user.social_media || {};
+    user.work_days = user.work_days || [];
+    user.work_hours = user.work_hours || { start: "08:00", end: "17:00" };
+    user.total_jobs_completed = user.total_jobs_completed || 0;
+    user.total_rating = user.total_rating || 0;
+    user.total_reviews = user.total_reviews || 0;
 
     req.user = user;
     next(); 

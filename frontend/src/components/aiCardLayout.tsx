@@ -5,7 +5,13 @@ import {
   Zap, 
   MousePointer2,
   TrendingUp,
-  Award
+  Award,
+  Rocket,
+  Target,
+  Users,
+  Briefcase,
+  Building2,
+  CheckCircle2
 } from "lucide-react";
 
 const KhaddemniLanding = () => {
@@ -53,45 +59,52 @@ const KhaddemniLanding = () => {
         <div className="grid lg:grid-cols-2 gap-16 items-start mb-32">
           <div className="text-right space-y-8">
             
-            {/* NSSA & SPEEDYCOM Badge - النسخة الهادئة والأنيقة */}
-            <div className="inline-flex items-center gap-3 px-3 py-1.5 bg-slate-50/50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800 rounded-full transition-all duration-300 hover:border-blue-200 group">
-              <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600">
-                <Award size={14} />
+            {/* Badge */}
+            <div className="inline-flex items-center gap-3 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200/60 dark:border-blue-800/30 rounded-full transition-all duration-300 hover:border-blue-400 group">
+              <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-md">
+                <Rocket size={14} />
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Initiative par</span>
-                <span className="text-[13px] font-semibold text-slate-600 dark:text-slate-300 tracking-[0.1em]">
-                  NSSA & SPEEDYCOM
+                <span className="text-[13px] font-bold text-blue-700 dark:text-blue-300 tracking-[0.05em]">
+                  "خدمني"
                 </span>
+                <span className="text-[10px] font-medium text-slate-500 uppercase tracking-tight">مشروع رقمي</span>
               </div>
             </div>
             
-            <h1 className="text-3xl md:text-[2.75rem] font-bold text-slate-900 dark:text-white leading-[1.15] tracking-tight">
-              خدمني: المنصة الوطنية <br/>
-              لربط <span className="text-blue-600 font-extrabold italic">الكفاءات</span> بالمشغلين.
+            <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white">
+              "خدمني" فضاء التلاقي
             </h1>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-700 dark:text-slate-300">
+              بين <span className="text-blue-600">طالب الشغل</span> و <span className="text-blue-600">صاحب العمل</span>
+            </h2>
             
-            <p className="text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl">
-              مشروع وطني طموح يهدف لرقمنة سوق الشغل في تونس وتوفير فرص حقيقية ومباشرة للجميع، بإشراف خبرات تقنية تونسية.
-            </p>
+            <div className="bg-blue-50 dark:bg-blue-950/30 p-5 rounded-2xl border-r-4 border-blue-500">
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-base md:text-lg font-medium">
+                <span className="font-bold text-blue-700">فكرة جديدة ومشروع رقمي طموح</span> هدفه 
+                خلق فرص جديدة وحقيقية ومباشرة بإشراف خبرات تونسية 100%. 
+                نساهم في إعادة هيكلة سوق الشغل بطريقة عصرية.
+              </p>
+            </div>
 
             {/* Statistiques */}
-            <div className="flex gap-12 pt-6">
-              <div className="flex flex-col">
+            <div className="flex gap-16 pt-6 justify-start">
+              <div className="text-center">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter">12k</span>
-                  <span className="text-2xl font-bold text-blue-600">+</span>
+                  <span className="text-6xl font-black text-slate-800 dark:text-white">12k</span>
+                  <span className="text-3xl font-bold text-blue-600">+</span>
                 </div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-[0.2em]">فرصة شغل</span>
+                <p className="text-md font-bold text-slate-500 mt-2">فرصة شغل</p>
               </div>
-              <div className="flex flex-col">
+              <div className="text-center">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter">65k</span>
-                  <span className="text-2xl font-bold text-blue-600">+</span>
+                  <span className="text-6xl font-black text-slate-800 dark:text-white">65k</span>
+                  <span className="text-3xl font-bold text-blue-600">+</span>
                 </div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-[0.2em]">باحث عن عمل</span>
+                <p className="text-md font-bold text-slate-500 mt-2">باحث عن عمل</p>
               </div>
             </div>
+
           </div>
 
           {/* Objectives Grid */}
@@ -110,9 +123,35 @@ const KhaddemniLanding = () => {
           </div>
         </div>
 
-        {/* --- Section 2: Partenaires Stratégiques (Premium) --- */}
+        {/* --- Section 2: Partenaires Stratégiques --- */}
         <div className="pt-24 border-t border-slate-100/60 dark:border-slate-800/60">
           
+          {/* نص "خدمني ليس مجرد منصة..." */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl text-white shadow-lg mb-6">
+              <Target size={32} />
+            </div>
+            <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-4">
+              "خدمني" ليس مجرد منصة، بل هو رؤية جديدة لسوق الشغل التونسي
+            </h3>
+            <p className="text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
+              نهدف إلى رقمنة سوق الشغل وتوفير فرص جديدة وحقيقية ومباشرة للجميع، 
+              بإشراف خبرات تقنية تونسية 100%، وبشراكة مع المؤسسات الوطنية والدولية.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3 mt-6">
+              <span className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
+                <CheckCircle2 size={16} /> فرص مباشرة
+              </span>
+              <span className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
+                <CheckCircle2 size={16} /> خبرات تونسية
+              </span>
+              <span className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
+                <CheckCircle2 size={16} /> رقمنة سوق الشغل
+              </span>
+            </div>
+          </div>
+
+          {/* شركاء استراتيجيين */}
           <div className="flex items-center justify-center gap-6 mb-24">
             <div className="hidden md:block h-[1px] w-24 bg-gradient-to-l from-blue-600/50 to-transparent"></div>
             <div className="relative group">
