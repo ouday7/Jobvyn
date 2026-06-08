@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { MapPin, Briefcase, Phone, Loader2, Layers, Wrench, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,18 +17,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getSpecialtyIcon, specialtiesList } from "@/lib/tunisiaData";
+import TunisiaInteractiveMap from "@/components/TunisiaInteractiveMap";
 
-const MapComponent = dynamic(() => import("@/components/MapComponent"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex items-center justify-center h-full w-full bg-slate-100 dark:bg-slate-800 rounded-2xl">
-      <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
-      <span className="mr-3 text-slate-500">جاري تحميل الخريطة...</span>
-    </div>
-  ),
-});
-
-// قائمة الفئات للفلترة من specialtiesList
+// قائمة الفئات للفلترة
 const categories = [
   { id: "all", name: "الكل", icon: "🔧" },
   ...specialtiesList.map(s => ({ id: s.name, name: s.name, icon: s.icon }))
@@ -41,17 +31,6 @@ const tunisianWilayas = [
   "قابس", "مدنين", "تطاوين", "قفصة", "توزر", "القيروان", "القصرين", "سيدي بوزيد"
 ];
 
-const wilayaCoordinates: Record<string, [number, number]> = {
-  "تونس": [36.8065, 10.1815], "أريانة": [36.8625, 10.1955], "بن عروس": [36.7385, 10.2215],
-  "منوبة": [36.8075, 10.0995], "نابل": [36.4565, 10.7375], "زغوان": [36.4025, 10.1425],
-  "بنزرت": [37.2745, 9.8735], "باجة": [36.7255, 9.1815], "جندوبة": [36.5015, 8.7805],
-  "الكاف": [36.1825, 8.7145], "سليانة": [36.0825, 9.3735], "سوسة": [35.8255, 10.6365],
-  "المنستير": [35.7775, 10.8265], "المهدية": [35.5045, 11.0625], "صفاقس": [34.7395, 10.7605],
-  "قابس": [33.8815, 10.0985], "مدنين": [33.3545, 10.5055], "تطاوين": [32.9345, 10.4515],
-  "قفصة": [34.4215, 8.7845], "توزر": [33.9195, 8.1335], "القيروان": [35.6775, 10.1015],
-  "القصرين": [35.1725, 8.8285], "سيدي بوزيد": [35.0385, 9.4855]
-};
-
 export default function FreelancePage() {
   const [freelancers, setFreelancers] = useState([]);
   const [filteredFreelancers, setFilteredFreelancers] = useState([]);
@@ -60,7 +39,7 @@ export default function FreelancePage() {
   const [selectedWilaya, setSelectedWilaya] = useState("كل الولايات");
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("list");
-  const [mapCenter, setMapCenter] = useState([34.0, 9.5]);
+  const [showMap, setShowMap] = useState(false);
 
   const fetchFreelancers = async () => {
     setLoading(true);
@@ -103,18 +82,15 @@ export default function FreelancePage() {
     fetchFreelancers();
   }, [selectedWilaya, selectedCategory]);
 
-  useEffect(() => {
-    if (selectedWilaya !== "كل الولايات" && wilayaCoordinates[selectedWilaya]) {
-      setMapCenter(wilayaCoordinates[selectedWilaya]);
-    } else {
-      setMapCenter([34.0, 9.5]);
-    }
-  }, [selectedWilaya]);
-
   const clearFilters = () => {
     setSelectedCategory("all");
     setSelectedWilaya("كل الولايات");
     setSearchTerm("");
+  };
+
+  const handleWilayaFromMap = (wilaya: string) => {
+    setSelectedWilaya(wilaya);
+    setShowMap(false);
   };
 
   const hasActiveFilters = selectedCategory !== "all" || selectedWilaya !== "كل الولايات" || searchTerm !== "";
@@ -149,18 +125,29 @@ export default function FreelancePage() {
               </SelectContent>
             </Select>
 
-            <Select value={selectedWilaya} onValueChange={setSelectedWilaya} dir="rtl">
-              <SelectTrigger className="h-12 bg-slate-50 border-slate-200 rounded-xl text-right">
-                <SelectValue placeholder="اختر الولاية" />
-              </SelectTrigger>
-              <SelectContent>
-                {tunisianWilayas.map((wilaya) => (
-                  <SelectItem key={wilaya} value={wilaya}>
-                    {wilaya}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              <Select value={selectedWilaya} onValueChange={setSelectedWilaya} dir="rtl" className="flex-1">
+                <SelectTrigger className="h-12 bg-slate-50 border-slate-200 rounded-xl text-right">
+                  <SelectValue placeholder="اختر الولاية" />
+                </SelectTrigger>
+                <SelectContent>
+                  {tunisianWilayas.map((wilaya) => (
+                    <SelectItem key={wilaya} value={wilaya}>
+                      {wilaya}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Button 
+                variant="outline" 
+                className="h-12 w-12 p-0 rounded-xl text-xl"
+                onClick={() => setShowMap(!showMap)}
+                title="خريطة تونس"
+              >
+                🗺️
+              </Button>
+            </div>
 
             <div className="relative">
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -182,11 +169,20 @@ export default function FreelancePage() {
           )}
         </div>
 
+        {/* الخريطة التفاعلية */}
+        {showMap && (
+          <div className="mb-8">
+            <TunisiaInteractiveMap 
+              onSelectWilaya={handleWilayaFromMap} 
+              selectedWilaya={selectedWilaya === "كل الولايات" ? "" : selectedWilaya} 
+            />
+          </div>
+        )}
+
         <div className="flex justify-between items-center mb-6">
           <Tabs value={viewMode} onValueChange={setViewMode}>
             <TabsList className="bg-slate-100 dark:bg-slate-800">
               <TabsTrigger value="list" className="gap-2"><Layers size={16} /> قائمة</TabsTrigger>
-              <TabsTrigger value="map" className="gap-2"><MapPin size={16} /> خريطة</TabsTrigger>
             </TabsList>
           </Tabs>
           <Badge variant="secondary" className="bg-blue-100 text-blue-700">{filteredFreelancers.length} مستقل(ة)</Badge>
@@ -199,10 +195,6 @@ export default function FreelancePage() {
             <Wrench className="h-16 w-16 text-slate-300 mx-auto mb-4" />
             <p className="text-slate-500 text-lg">ما لقيتش حرفيين بهذه المعايير</p>
             <Button onClick={clearFilters} variant="outline" className="mt-4 rounded-xl">مسح الفلاتر</Button>
-          </div>
-        ) : viewMode === "map" ? (
-          <div className="rounded-2xl overflow-hidden border shadow-xl h-[500px]">
-            <MapComponent center={mapCenter} freelancers={filteredFreelancers} />
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

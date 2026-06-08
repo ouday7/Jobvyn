@@ -192,6 +192,7 @@ const RegisterPage = () => {
   };
 
   return (
+    
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#FDFDFD] dark:bg-slate-950 relative overflow-hidden" dir="rtl">
       <div className="absolute inset-0 z-0 opacity-50">
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-100 dark:bg-blue-900/10 blur-3xl rounded-full" />
@@ -206,6 +207,7 @@ const RegisterPage = () => {
             </div>
             <span className="text-2xl font-black text-slate-900 dark:text-white">خدّمن<span className="text-blue-600">ي</span></span>
           </Link>
+          
           <h1 className="text-2xl font-black text-slate-900 dark:text-white">أعمل حساب جديد</h1>
         </div>
 

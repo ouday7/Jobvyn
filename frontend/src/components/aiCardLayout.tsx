@@ -2,33 +2,33 @@
 import React from "react";
 import { 
   Globe2, 
-  Zap, 
   MousePointer2,
   TrendingUp,
-  Award,
   Rocket,
   Target,
-  Users,
-  Briefcase,
-  Building2,
   CheckCircle2
 } from "lucide-react";
 
 const KhaddemniLanding = () => {
   const partners = [
     { 
+      name: "وزارة التشغيل", 
+      url: "/wzart.png",
+      label: "الشريك الرسمي للتشغيل"
+    },
+    { 
       name: "ANETI", 
-      url: "https://scontent.ftun8-1.fna.fbcdn.net/v/t39.30808-6/272327292_248682147437401_2838525502664882152_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=uogFl4VPEOAQ7kNvwHfPzd0&_nc_oc=Adpxsn0XoWfSA9rQ1wr9JIbGxG94-JTxBOlFpq4oR3QvznnuXwrkiWtRKODEjR6YW5w&_nc_zt=23&_nc_ht=scontent.ftun8-1.fna&_nc_gid=dg9ufUUI1oWkeRRiiYOGhw&_nc_ss=7a3a8&oh=00_Af1w0QcMVXzWlmxhRs6Luazq9KUvFXO4G0XNV7Xiki7gGw&oe=69E569F1",
+      url: "/aneti.png",
       label: "الشريك الوطني للتشغيل"
     },
     { 
-      name: "AHK Tunisia", 
-      url: "https://jamaity.org/wp-content/uploads/2016/03/logo_ahk.jpg",
-      label: "الشريك الاستراتيجي الألماني"
+      name: "وزارة الشؤون الاجتماعية", 
+      url: "/wiizart.jpg",
+      label: "الشريك الرسمي لاجتماعي"
     },
     { 
       name: "Amen Assurance", 
-      url: "https://www.african-markets.com/images/markets/bvmt/amen-bank.jpg",
+      url: "/amen.png",
       label: "شريك الأمان والضمان المهني"
     }
   ];
@@ -40,8 +40,8 @@ const KhaddemniLanding = () => {
       icon: <MousePointer2 size={24} />
     },
     {
-      title: "تقليص الفوارق الجهوية",
-      desc: "خلق فرص متساوية للتشغيل في كامل تراب الجمهورية والحد من التفاوت بين الفئات.",
+      title: "نسعى إلى دعم سوق الشغل عبر خلق فرص متكافئة في كامل تراب الجمهورية",
+      desc: "لحد من التفاوت بين الفئات باعتماد آليات عصرية وذكية تُحقق الإدماج الاجتماعي الشامل.",
       icon: <Globe2 size={24} />
     },
     {
@@ -91,14 +91,14 @@ const KhaddemniLanding = () => {
             <div className="flex gap-16 pt-6 justify-start">
               <div className="text-center">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-6xl font-black text-slate-800 dark:text-white">12k</span>
+                  <span className="text-6xl font-black text-slate-800 dark:text-white">24k</span>
                   <span className="text-3xl font-bold text-blue-600">+</span>
                 </div>
                 <p className="text-md font-bold text-slate-500 mt-2">فرصة شغل</p>
               </div>
               <div className="text-center">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-6xl font-black text-slate-800 dark:text-white">65k</span>
+                  <span className="text-6xl font-black text-slate-800 dark:text-white">12k</span>
                   <span className="text-3xl font-bold text-blue-600">+</span>
                 </div>
                 <p className="text-md font-bold text-slate-500 mt-2">باحث عن عمل</p>
@@ -123,34 +123,34 @@ const KhaddemniLanding = () => {
           </div>
         </div>
 
-        {/* --- Section 2: Partenaires Stratégiques --- */}
+        {/* --- Section 2: نص "خدمني ليس مجرد منصة..." (تمت إعادته) --- */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl text-white shadow-lg mb-6">
+            <Target size={32} />
+          </div>
+          <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-4">
+            "خدمني" ليس مجرد منصة، بل هو رؤية جديدة لسوق الشغل التونسي
+          </h3>
+          <p className="text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
+            نهدف إلى رقمنة سوق الشغل وتوفير فرص جديدة وحقيقية ومباشرة للجميع، 
+            بإشراف خبرات تقنية تونسية 100%، وبشراكة مع المؤسسات الوطنية والدولية.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 mt-6">
+            <span className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
+              <CheckCircle2 size={16} /> فرص مباشرة
+            </span>
+            <span className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
+              <CheckCircle2 size={16} /> خبرات تونسية
+            </span>
+            <span className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
+              <CheckCircle2 size={16} /> رقمنة سوق الشغل
+            </span>
+          </div>
+        </div>
+
+        {/* --- Section 3: Partenaires Stratégiques --- */}
         <div className="pt-24 border-t border-slate-100/60 dark:border-slate-800/60">
           
-          {/* نص "خدمني ليس مجرد منصة..." */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl text-white shadow-lg mb-6">
-              <Target size={32} />
-            </div>
-            <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-4">
-              "خدمني" ليس مجرد منصة، بل هو رؤية جديدة لسوق الشغل التونسي
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
-              نهدف إلى رقمنة سوق الشغل وتوفير فرص جديدة وحقيقية ومباشرة للجميع، 
-              بإشراف خبرات تقنية تونسية 100%، وبشراكة مع المؤسسات الوطنية والدولية.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3 mt-6">
-              <span className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
-                <CheckCircle2 size={16} /> فرص مباشرة
-              </span>
-              <span className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
-                <CheckCircle2 size={16} /> خبرات تونسية
-              </span>
-              <span className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
-                <CheckCircle2 size={16} /> رقمنة سوق الشغل
-              </span>
-            </div>
-          </div>
-
           {/* شركاء استراتيجيين */}
           <div className="flex items-center justify-center gap-6 mb-24">
             <div className="hidden md:block h-[1px] w-24 bg-gradient-to-l from-blue-600/50 to-transparent"></div>
@@ -167,7 +167,7 @@ const KhaddemniLanding = () => {
             <div className="hidden md:block h-[1px] w-24 bg-gradient-to-r from-blue-600/50 to-transparent"></div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {partners.map((p, i) => (
               <div key={i} className="group relative">
                 <div className="absolute inset-0 bg-blue-600 rounded-[2.5rem] rotate-1 scale-95 opacity-0 group-hover:opacity-5 group-hover:scale-100 transition-all duration-500"></div>
@@ -185,7 +185,8 @@ const KhaddemniLanding = () => {
                   <div className="w-8 h-[2px] bg-slate-100 dark:bg-slate-800 group-hover:w-16 group-hover:bg-blue-600 transition-all duration-500 mb-4"></div>
 
                   <div className="text-center">
-                    <p className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] group-hover:text-blue-600 transition-colors">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white mb-1">{p.name}</p>
+                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.1em] group-hover:text-blue-600 transition-colors">
                       {p.label}
                     </p>
                   </div>

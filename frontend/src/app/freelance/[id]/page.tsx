@@ -190,7 +190,7 @@ export default function FreelancerDetailPage() {
                   <GraduationCap className="h-4 w-4" /> مهارات
                 </TabsTrigger>
                 <TabsTrigger value="services" className="rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-slate-950 gap-2">
-                  <Calendar className="h-4 w-4" /> خدماتي
+                  <Calendar className="h-4 w-4" /> أيام العمل
                 </TabsTrigger>
                 <TabsTrigger value="contact" className="rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-slate-950 gap-2">
                   <Phone className="h-4 w-4" /> تواصل
@@ -386,7 +386,6 @@ export default function FreelancerDetailPage() {
         </div>
 
         <div className="mt-8 text-center text-xs text-slate-400 border-t border-slate-200 dark:border-slate-800 pt-6">
-          <p>© 2026 Jobvyn - آخر تحديث : {new Date(freelancer.created_at).toLocaleDateString('ar-TN')}</p>
         </div>
       </div>
     </div>

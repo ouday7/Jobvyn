@@ -14,7 +14,6 @@ import {
   Mail,
   Eye,
   EyeOff,
-  BriefcaseBusiness,
   ShieldCheck,
   Users,
 } from "lucide-react";
@@ -22,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/loading";
+import Image from "next/image";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -76,13 +76,19 @@ const LoginPage = () => {
       <div className="w-full max-w-md relative z-10">
         {/* Logo & Header */}
         <div className="text-center mb-10">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
-            <div className="p-3 bg-blue-600 rounded-2xl shadow-xl shadow-blue-200 dark:shadow-none group-hover:scale-110 transition-transform">
-              <BriefcaseBusiness size={28} className="text-white" />
+          <Link href="/" className="inline-flex flex-col items-center gap-3 mb-6 group">
+            {/* Logo كبير من مجلد public */}
+            <div className="relative w-64 h-64 group-hover:scale-110 transition-all duration-300">
+              <Image
+                src="/logo.png"
+                alt="خدّمني"
+                fill
+                className="object-contain rounded-2xl"
+                priority
+                unoptimized
+              />
             </div>
-            <span className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white">
-              خدّمن<span className="text-blue-600">ي</span>
-            </span>
+            {/* تم حذف كلمة "خدّمني" التي كانت هنا */}
           </Link>
           <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-3">
             مرحباً بيك من جديد

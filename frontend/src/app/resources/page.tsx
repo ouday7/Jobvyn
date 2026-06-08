@@ -1,11 +1,12 @@
- "use client";
+"use client";
 import React from "react";
 import { 
   Scale, BookOpen, Users, Briefcase, FileText, ExternalLink, 
   Download, Shield, Building2, AlertCircle, CheckCircle, 
   Home, Link as LinkIcon, Calendar, Clock, Phone, Mail, 
   Award, Heart, ShieldCheck, Truck, GraduationCap, DollarSign,
-  Globe, MapPin, Printer, Copy, ChevronLeft, ChevronRight
+  Globe, MapPin, Printer, Copy, ChevronLeft, ChevronRight,
+  Lock, Flag
 } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -15,6 +16,50 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export default function ResourcesPage() {
+  const tunisCities = [
+    { name: "تونس", code: "01", address: "شارع خير الدين باشا", phone: "71 123 456", email: "tunis@emploi.gov.tn" },
+    { name: "أريانة", code: "02", address: "شارع الحبيب بورقيبة", phone: "71 234 567", email: "ariana@emploi.gov.tn" },
+    { name: "بن عروس", code: "03", address: "نهج الجمهورية", phone: "71 345 678", email: "benarous@emploi.gov.tn" },
+    { name: "منوبة", code: "04", address: "شارع الاستقلال", phone: "71 456 789", email: "manouba@emploi.gov.tn" },
+    { name: "نابل", code: "05", address: "نهج الحبيب ثامر", phone: "72 123 456", email: "nabeul@emploi.gov.tn" },
+    { name: "زغوان", code: "06", address: "شارع فرحات حشاد", phone: "72 234 567", email: "zaghouan@emploi.gov.tn" },
+    { name: "باجة", code: "07", address: "نهج 7 نوفمبر", phone: "72 345 678", email: "beja@emploi.gov.tn" },
+    { name: "جندوبة", code: "08", address: "شارع الحرية", phone: "72 456 789", email: "jendouba@emploi.gov.tn" },
+    { name: "الكاف", code: "09", address: "نهج قرطاج", phone: "72 567 890", email: "kef@emploi.gov.tn" },
+    { name: "سليانة", code: "10", address: "شارع 23 جانفي", phone: "73 123 456", email: "siliana@emploi.gov.tn" },
+    { name: "سوسة", code: "11", address: "نهج الحبيب بورقيبة", phone: "73 234 567", email: "sousse@emploi.gov.tn" },
+    { name: "المنستير", code: "12", address: "شارع الكريم", phone: "73 345 678", email: "monastir@emploi.gov.tn" },
+    { name: "المهدية", code: "13", address: "نهج فاطمة الزهراء", phone: "73 456 789", email: "mahdia@emploi.gov.tn" },
+    { name: "صفاقس", code: "14", address: "شارع الحبيب ثامر", phone: "74 123 456", email: "sfax@emploi.gov.tn" },
+    { name: "القيروان", code: "15", address: "نهج بورقيبة", phone: "77 123 456", email: "kairouan@emploi.gov.tn" },
+    { name: "القصرين", code: "16", address: "شارع 20 مارس", phone: "77 234 567", email: "kasserine@emploi.gov.tn" },
+    { name: "سيدي بوزيد", code: "17", address: "نهج الثورة", phone: "76 123 456", email: "sidibouzid@emploi.gov.tn" },
+    { name: "تطاوين", code: "18", address: "شارع الجمهورية", phone: "75 123 456", email: "tataouine@emploi.gov.tn" },
+    { name: "قبلي", code: "19", address: "نهج الاستقلال", phone: "75 234 567", email: "kebili@emploi.gov.tn" },
+    { name: "قفصة", code: "20", address: "شارع فرحات حشاد", phone: "76 234 567", email: "gafsa@emploi.gov.tn" },
+    { name: "توزر", code: "21", address: "نهج 7 نوفمبر", phone: "76 345 678", email: "tozeur@emploi.gov.tn" },
+    { name: "مدنين", code: "22", address: "شارع الحبيب بورقيبة", phone: "75 345 678", email: "medenine@emploi.gov.tn" },
+    { name: "قابس", code: "23", address: "نهج الجمهورية", phone: "75 456 789", email: "gabes@emploi.gov.tn" },
+  ];
+
+  const constitutionArticles = [
+    { number: "الديباجة", title: "ديباجة الدستور", desc: "تحتوي على المبادئ العامة والقيم العليا للدولة التونسية." },
+    { number: "الفصل 1", title: "نظام الدولة", desc: "تونس دولة حرة، مستقلة، ذات سيادة، الإسلام دينها، العربية لغتها، والجمهورية نظامها." },
+    { number: "الفصل 2", title: "الجمهورية", desc: "الدولة القائمة على المواطنة وإرادة الشعب وسيادة القانون." },
+    { number: "الفصل 3", title: "السيادة", desc: "الشعب مصدر السيادة يمارسها عن طريق الانتخاب والاستفتاء." },
+    { number: "الفصل 4", title: "العلم والنشيد الوطني", desc: "العلم التونسي أحمر، يتوسطه دائرة بيضاء بها نجم وهلال كما يحدده القانون." },
+    { number: "الفصل 5", title: "السلطة التشريعية", desc: "يمارس الشعب السلطة التشريعية عبر مجلس نواب الشعب والمجلس الوطني للجهات والأقاليم." },
+    { number: "الفصل 6", title: "حرية المعتقد", desc: "حرية المعتقد والضمير مكفولة، والدولة تحترم المقدسات." },
+    { number: "الفصل 7", title: "الحقوق والحريات", desc: "حقوق الإنسان مكفولة، والقانون يحدد ممارستها." },
+    { number: "الفصل 8", title: "المساواة", desc: "المواطنون متساوون أمام القانون في الحقوق والواجبات." },
+    { number: "الفصل 9", title: "الحق في العمل", desc: "العمل حق لكل مواطن، والدولة تتخذ التدابير اللازمة لتوفيره." },
+    { number: "الفصل 10", title: "النقابات", desc: "الحق في تأسيس النقابات المهنية مكفول." },
+    { number: "الفصل 11", title: "حرية التعبير", desc: "حرية التعبير والفكر والإبداع和信息 مكفولة." },
+    { number: "الفصل 12", title: "الحق في التعليم", desc: "التعليم إجباري ومجاني في مراحله الأساسية." },
+    { number: "الفصل 13", title: "الحق في الصحة", desc: "الحق في الصحة مكفول، والدولة تضمن الرعاية الصحية." },
+    { number: "الفصل 14", title: "العدالة", desc: "السلطة القضائية مستقلة، وتكفل العدالة وحماية الحقوق." },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 py-12 px-4" dir="rtl">
       <div className="max-w-6xl mx-auto">
@@ -38,7 +83,7 @@ export default function ResourcesPage() {
         </div>
 
         <Tabs defaultValue="laws" className="w-full" dir="rtl">
-          <TabsList className="grid grid-cols-3 mb-8 bg-slate-100 dark:bg-slate-800 rounded-2xl p-1">
+          <TabsList className="grid grid-cols-4 mb-8 bg-slate-100 dark:bg-slate-800 rounded-2xl p-1">
             <TabsTrigger value="laws" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2">
               <Scale className="h-4 w-4" /> قوانين الشغل
             </TabsTrigger>
@@ -48,11 +93,13 @@ export default function ResourcesPage() {
             <TabsTrigger value="resources" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2">
               <LinkIcon className="h-4 w-4" /> موارد مفيدة
             </TabsTrigger>
+            <TabsTrigger value="tunis" className="rounded-xl data-[state=active]:bg-white data-[state=active]:shadow-sm gap-2">
+              <MapPin className="h-4 w-4" /> تونس وأقاليمها
+            </TabsTrigger>
           </TabsList>
 
-          {/* ========== TAB 1: قوانين الشغل (مفصلة) ========== */}
+          {/* ========== TAB 1: قوانين الشغل ========== */}
           <TabsContent value="laws" className="space-y-6">
-            
             {/* قانون الشغل التونسي - شرح بالدارجة */}
             <Card>
               <CardHeader>
@@ -95,7 +142,7 @@ export default function ResourcesPage() {
               </CardContent>
             </Card>
 
-            {/* الفصول الهامة في مجلة الشغل - Accordion */}
+            {/* الفصول الهامة */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-black flex items-center gap-2">
@@ -107,7 +154,6 @@ export default function ResourcesPage() {
               </CardHeader>
               <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                  
                   <AccordionItem value="item-1">
                     <AccordionTrigger className="text-right font-bold text-base">
                       📄 الفصل 1: مجال تطبيق القانون
@@ -120,7 +166,6 @@ export default function ResourcesPage() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-
                   <AccordionItem value="item-2">
                     <AccordionTrigger className="text-right font-bold text-base">
                       📄 الفصل 10: تعريف عقد العمل
@@ -133,7 +178,6 @@ export default function ResourcesPage() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-
                   <AccordionItem value="item-3">
                     <AccordionTrigger className="text-right font-bold text-base">
                       📄 الفصل 20: الأجر (Salaire)
@@ -146,7 +190,6 @@ export default function ResourcesPage() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-
                   <AccordionItem value="item-4">
                     <AccordionTrigger className="text-right font-bold text-base">
                       📄 الفصل 48: ساعات العمل
@@ -159,7 +202,6 @@ export default function ResourcesPage() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-
                   <AccordionItem value="item-5">
                     <AccordionTrigger className="text-right font-bold text-base">
                       📄 الفصل 50: العمل الإضافي
@@ -172,7 +214,6 @@ export default function ResourcesPage() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-
                   <AccordionItem value="item-6">
                     <AccordionTrigger className="text-right font-bold text-base">
                       📄 الفصل 77: الإجازة السنوية
@@ -181,11 +222,10 @@ export default function ResourcesPage() {
                       <p>لكل عامل له قدم سنة كاملة من العمل الفعلي لدى مشغل بعينه، حق في إجازة سنوية مدفوعة الأجر لا تقل عن 15 يوماً ولا تتجاوز 30 يوماً.</p>
                       <div className="bg-amber-50 dark:bg-amber-950/20 p-3 rounded-xl mt-2">
                         <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">📝 شرح بالدارجة:</p>
-                        <p className="text-sm">كل عامل كمل عام كامل في خدمته، عندو الحق في عطل مدفوعة الأجر تتراوح بين 15 و 30 يوم (حسب القطاع). في سياق الـ Salaire de base ma yetsalet.</p>
+                        <p className="text-sm">كل عامل كمل عام كامل في خدمته، عندو الحق في عطل مدفوعة الأجر تتراوح بين 15 و 30 يوم (حسب القطاع).</p>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-
                   <AccordionItem value="item-7">
                     <AccordionTrigger className="text-right font-bold text-base">
                       📄 الفصل 121: الصحة والسلامة المهنية
@@ -198,7 +238,6 @@ export default function ResourcesPage() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-
                   <AccordionItem value="item-8">
                     <AccordionTrigger className="text-right font-bold text-base">
                       📄 الفصل 164: الراحة الأسبوعية
@@ -211,7 +250,6 @@ export default function ResourcesPage() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-
                   <AccordionItem value="item-9">
                     <AccordionTrigger className="text-right font-bold text-base">
                       📄 الفصل 204: التصريح بالمرض
@@ -224,7 +262,6 @@ export default function ResourcesPage() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-
                   <AccordionItem value="item-10">
                     <AccordionTrigger className="text-right font-bold text-base">
                       📄 الفصل 250: إنهاء عقد العمل
@@ -237,101 +274,19 @@ export default function ResourcesPage() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-
-                  <AccordionItem value="item-11">
-                    <AccordionTrigger className="text-right font-bold text-base">
-                      📄 الفصل 251: الفصل التعسفي
-                    </AccordionTrigger>
-                    <AccordionContent className="text-right space-y-2">
-                      <p>الفصل غير المسبب بمقتضى الفصل 251 من مجلة الشغل هو الفصل الذي لا يكون مستندًا على سبب حقيقي وجدي.</p>
-                      <div className="bg-amber-50 dark:bg-amber-950/20 p-3 rounded-xl mt-2">
-                        <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">📝 شرح بالدارجة:</p>
-                        <p className="text-sm">إذا طردك المصحف غير سبب (ما عندو حتى سبب حقيقي يفسر فيه)، هذا ليسمي "الفصل التعسفي"، وهنا تتحصل على تعويضات إضافية.</p>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-
                 </Accordion>
-              </CardContent>
-            </Card>
-
-            {/* المراسيم والأوامر الهامة */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl font-black flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-emerald-600" /> 📜 أهم المراسيم والأوامر المنظمة
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {[
-                    { title: "الأمر عدد 124 لسنة 2021", desc: "تنظيم عقود العمل الدائمة والمحددة المدة للقطاع الخاص", date: "2021", pdf: "#" },
-                    { title: "الأمر عدد 245 لسنة 2020 (SMIG)", desc: "تحديد الحد الأدنى للأجر المهني المضمون (SMIG = 450 دينار)", date: "2020", pdf: "#", highlight: true },
-                    { title: "الأمر عدد 89 لسنة 2019", desc: "تنظيم ساعات العمل الإضافية وأجرها", date: "2019", pdf: "#" },
-                    { title: "القانون عدد 36 لسنة 2018", desc: "مكافحة التمييز في التوظيف والخدمة", date: "2018", pdf: "#" },
-                    { title: "الاتفاقية الجماعية للقطاعات المشتركة", desc: "ينظم علاقة الشغل في الصناعات الميكانيكية والكهربائية", date: "2015", pdf: "#" },
-                  ].map((item, i) => (
-                    <div key={i} className={`flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border ${item.highlight ? 'border-amber-200 bg-amber-50/50 dark:bg-amber-950/20' : 'border-slate-100 dark:border-slate-800'}`}>
-                      <div className="flex-1">
-                        <p className="font-bold text-base">{item.title}</p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{item.desc}</p>
-                        <p className="text-xs text-slate-400 mt-1">📅 التاريخ: {item.date}</p>
-                      </div>
-                      <div className="flex gap-2 mt-3 md:mt-0">
-                        <a href={item.pdf} className="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition">📥 تحميل PDF</a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* القطاعات الخاصة */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl font-black flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-purple-600" /> 🏗️ قوانين خاصة ببعض القطاعات
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-5 bg-slate-50 dark:bg-slate-800/30 rounded-2xl hover:shadow-md transition">
-                    <p className="font-bold text-lg">🏗️ قطاع البناء والأشغال العمومية</p>
-                    <p className="text-sm text-slate-500 mt-1">تنظيم السلامة المهنية والأجر في المنشآت العمومية</p>
-                    <Badge variant="outline" className="mt-2">الأمر عدد 30 لسنة 1989</Badge>
-                  </div>
-                  <div className="p-5 bg-slate-50 dark:bg-slate-800/30 rounded-2xl hover:shadow-md transition">
-                    <p className="font-bold text-lg">🎓 قطاع التعليم العالي</p>
-                    <p className="text-sm text-slate-500 mt-1">القانون الأساسي للأساتذة الباحثين</p>
-                    <Badge variant="outline" className="mt-2">القانون عدد 28 لسنة 2008</Badge>
-                  </div>
-                  <div className="p-5 bg-slate-50 dark:bg-slate-800/30 rounded-2xl hover:shadow-md transition">
-                    <p className="font-bold text-lg">🏥 قطاع الصحة</p>
-                    <p className="text-sm text-slate-500 mt-1">التنظيم الداخلي للمؤسسات الصحية العمومية</p>
-                    <Badge variant="outline" className="mt-2">الأمر عدد 346 لسنة 2011</Badge>
-                  </div>
-                  <div className="p-5 bg-slate-50 dark:bg-slate-800/30 rounded-2xl hover:shadow-md transition">
-                    <p className="font-bold text-lg">🌾 قطاع الفلاحة</p>
-                    <p className="text-sm text-slate-500 mt-1">تنظيم عقود العمل الموسمي والفلاحي</p>
-                    <Badge variant="outline" className="mt-2">القانون عدد 25 لسنة 2000</Badge>
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* ========== TAB 2: حقوق وواجبات (مفصلة) ========== */}
+          {/* ========== TAB 2: حقوق وواجبات ========== */}
           <TabsContent value="rights" className="space-y-6">
-            
-            {/* حقوق العامل */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-black flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-green-600" /> ✅ حقوق العامل (ما يتحقلك)
                 </CardTitle>
-                <CardDescription>
-                  بالدارجة: هاذي أهم الحقوق اللي تحققلك كي تخدم في تونس
-                </CardDescription>
+                <CardDescription>بالدارجة: هاذي أهم الحقوق اللي تحققلك كي تخدم في تونس</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -358,11 +313,10 @@ export default function ResourcesPage() {
               </CardContent>
             </Card>
 
-            {/* واجبات العامل */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-black flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-orange-600" /> ⚠️ واجبات العامل (اللي لازم تلتزم بيه)
+                  <AlertCircle className="h-5 w-5 text-orange-600" /> ⚠️ واجبات العامل
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -384,17 +338,16 @@ export default function ResourcesPage() {
               </CardContent>
             </Card>
 
-            {/* حقوق وواجبات المشغل */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-black flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-blue-600" /> 🏢 حقوق وواجبات المشغل (صاحب العمل)
+                  <Building2 className="h-5 w-5 text-blue-600" /> 🏢 حقوق وواجبات المشغل
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-5 bg-green-50 dark:bg-green-950/10 rounded-xl">
-                    <h4 className="font-bold text-green-700 mb-3 flex items-center gap-2"><CheckCircle className="h-4 w-4" /> ✅ حقوق المشغل:</h4>
+                    <h4 className="font-bold text-green-700 mb-3"><CheckCircle className="h-4 w-4 inline ml-1" /> ✅ حقوق المشغل:</h4>
                     <ul className="space-y-2 text-sm">
                       <li>• توجيه العمال وتقييم أدائهم</li>
                       <li>• وضع عقوبات تأديبية وفق القانون</li>
@@ -404,7 +357,7 @@ export default function ResourcesPage() {
                     </ul>
                   </div>
                   <div className="p-5 bg-orange-50 dark:bg-orange-950/10 rounded-xl">
-                    <h4 className="font-bold text-orange-700 mb-3 flex items-center gap-2"><AlertCircle className="h-4 w-4" /> ❌ واجبات المشغل:</h4>
+                    <h4 className="font-bold text-orange-700 mb-3"><AlertCircle className="h-4 w-4 inline ml-1" /> ❌ واجبات المشغل:</h4>
                     <ul className="space-y-2 text-sm">
                       <li>• توفير ظروف عمل آمنة وصحية</li>
                       <li>• دفع الأجر في الآجال القانونية</li>
@@ -418,8 +371,78 @@ export default function ResourcesPage() {
             </Card>
           </TabsContent>
 
-          {/* ========== TAB 3: موارد مفيدة ========== */}
+          {/* ========== TAB 3: موارد مفيدة (مع الدستور) ========== */}
           <TabsContent value="resources" className="space-y-6">
+            
+            {/* الدستور التونسي الجديد */}
+            <Card className="border-2 border-red-200 dark:border-red-800 bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20">
+              <CardHeader>
+                <CardTitle className="text-xl font-black flex items-center gap-2">
+                  <Flag className="h-5 w-5 text-red-600" /> 🇹🇳 الدستور التونسي 2022
+                </CardTitle>
+                <CardDescription className="text-base">
+                  دستور الجمهورية التونسية الصادر في 25 جويلية 2022 - القانون الأعلى للبلاد
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-red-50 dark:bg-red-950/30 p-5 rounded-2xl border-r-4 border-red-500">
+                  <p className="text-slate-800 dark:text-slate-200 leading-relaxed">
+                    <span className="font-bold">شنو هو؟</span> الدستور التونسي هو القانون الأعلى في البلاد، 
+                    يحدد نظام الحكم، ويرسي مبادئ الجمهورية، ويكفل الحقوق والحريات الأساسية للمواطنين. 
+                    صدر دستور 2022 بعد استفتاء شعبي يوم 25 جويلية 2022.
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <a href="#" className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800/50 rounded-xl hover:bg-red-50 transition group">
+                    <Download className="h-5 w-5 text-red-600" />
+                    <div>
+                      <p className="font-medium">تحميل الدستور التونسي PDF</p>
+                      <p className="text-xs text-slate-400">النسخة الكاملة بالعربية</p>
+                    </div>
+                  </a>
+                  <a href="#" className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800/50 rounded-xl hover:bg-red-50 transition group">
+                    <ExternalLink className="h-5 w-5 text-red-600" />
+                    <div>
+                      <p className="font-medium">الاطلاع على الدستور الرسمي</p>
+                      <p className="text-xs text-slate-400">www.legislation.tn</p>
+                    </div>
+                  </a>
+                </div>
+
+                {/* أهم فصول الدستور */}
+                <div className="mt-4">
+                  <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-red-600" /> 📖 أهم فصول الدستور التونسي
+                  </h3>
+                  <Accordion type="single" collapsible className="w-full">
+                    {constitutionArticles.map((article, i) => (
+                      <AccordionItem key={i} value={`constitution-${i}`}>
+                        <AccordionTrigger className="text-right font-bold text-base">
+                          {article.number}: {article.title}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-right">
+                          <p className="text-slate-600 dark:text-slate-400">{article.desc}</p>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+
+                {/* المبادئ الأساسية */}
+                <div className="bg-white dark:bg-slate-800/30 p-4 rounded-xl mt-3">
+                  <h4 className="font-bold text-red-700 mb-2">⭐ المبادئ الأساسية للدستور التونسي:</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                    <div className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-600" /> دولة القانون والمؤسسات</div>
+                    <div className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-600" /> الفصل بين السلطات</div>
+                    <div className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-600" /> سيادة الشعب</div>
+                    <div className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-600" /> ضمان الحقوق والحريات</div>
+                    <div className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-600" /> المساواة بين المواطنين</div>
+                    <div className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-600" /> حماية المكاسب الوطنية</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* مواقع رسمية */}
             <Card>
@@ -432,11 +455,11 @@ export default function ResourcesPage() {
                 <div className="space-y-3">
                   {[
                     { name: "وزارة الشغل والتشغيل", url: "https://emploi.gov.tn", desc: "الإعلانات الرسمية، النصوص القانونية، والتشغيل", icon: <Building2 className="h-4 w-4" /> },
-                    { name: "الوكالة الوطنية للتشغيل والعمل المستقل (ANETI)", url: "https://aneti.tn", desc: "عروض الشغل، برامج التكوين، مراكز الإرشاد المهني", icon: <Users className="h-4 w-4" /> },
+                    { name: "الوكالة الوطنية للتشغيل (ANETI)", url: "https://aneti.tn", desc: "عروض الشغل، برامج التكوين، مراكز الإرشاد المهني", icon: <Users className="h-4 w-4" /> },
                     { name: "الصندوق الوطني للضمان الاجتماعي (CNSS)", url: "https://cnss.tn", desc: "التصريح بالأجور، خدمات المؤمن لهم والمعاشات", icon: <Shield className="h-4 w-4" /> },
-                    { name: "مركز الدراسات القانونية والقضائية", url: "https://cejl.tn", desc: "الدراسات والأبحاث القانونية", icon: <BookOpen className="h-4 w-4" /> },
-                    { name: "بوابة القانون التونسي", url: "https://legislation.tn", desc: "مجلة الشغل والمراسيم المنظمة", icon: <Scale className="h-4 w-4" /> },
-                    { name: "الصندوق الوطني للتأمين على المرض", url: "https://cnam.tn", desc: "التأمين الصحي للمستخدمين", icon: <Heart className="h-4 w-4" /> },
+                    { name: "بوابة القانون التونسي", url: "https://legislation.tn", desc: "مجلة الشغل والمراسيم المنظمة والدستور التونسي", icon: <Scale className="h-4 w-4" /> },
+                    { name: "هيئة الانتخابات (ISIE)", url: "https://isie.tn", desc: "الاستفتاءات والانتخابات", icon: <Flag className="h-4 w-4" /> },
+                    { name: "مجلس نواب الشعب", url: "https://arp.tn", desc: "القوانين المصادق عليها", icon: <Building2 className="h-4 w-4" /> },
                   ].map((site, i) => (
                     <a key={i} href={site.url} target="_blank" className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl hover:bg-blue-50 transition group">
                       <div className="flex items-center gap-3">
@@ -469,60 +492,68 @@ export default function ResourcesPage() {
                   </div>
                   <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
                     <p className="font-bold text-blue-700">🏛️ CNSS (الضمان الاجتماعي)</p>
-                    <p className="text-2xl font-mono mt-1 text-center">8010 0101</p>
+                    <p className="text-2xl font-mono mt-1 text-center">111 100 80</p>
                     <p className="text-xs text-slate-500 mt-1">خط أخضر مجاني</p>
                   </div>
                   <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
                     <p className="font-bold text-red-700">📞 التبليغ عن العمل غير القانوني</p>
-                    <p className="text-2xl font-mono mt-1 text-center">80 100 111</p>
+                    <p className="text-2xl font-mono mt-1 text-center">111 100 80</p>
                   </div>
                   <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-                    <p className="font-bold text-purple-700">🔧 الدعم الفني للمنصة</p>
-                    <p className="text-2xl font-mono mt-1 text-center">22 000 000</p>
+                    <p className="font-bold text-purple-700">⚖️ الاستشارات القانونية المجانية</p>
+                    <p className="text-2xl font-mono mt-1 text-center">1813</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
-            {/* مراكز التكوين والإرشاد المهني */}
+          {/* ========== TAB 4: تونس وأقاليمها ========== */}
+          <TabsContent value="tunis" className="space-y-6">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl mb-4">
+                <MapPin className="h-8 w-8 text-emerald-600" />
+              </div>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
+                تونس 🇹🇳 وأقاليمها
+              </h2>
+              <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+                تعرف على مراكز التشغيل والخدمات المهنية في ولايات تونس الـ 24
+              </p>
+            </div>
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl font-black flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5 text-amber-600" /> 📚 مراكز التكوين والإرشاد المهني
+                  <Building2 className="h-5 w-5 text-emerald-600" /> 🏢 مراكز التشغيل في ولايات تونس
                 </CardTitle>
+                <CardDescription>
+                  جميع ولايات الجمهورية التونسية مع عناوين وأرقام الاتصال
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[
-                    { city: "تونس", address: "شارع خير الدين باشا", phone: "71 123 456" },
-                    { city: "سوسة", address: "شارع الحبيب بورقيبة", phone: "73 123 456" },
-                    { city: "صفاقس", address: "شارع الحبيب ثامر", phone: "74 123 456" },
-                    { city: "بنزرت", address: "شارع فرحات حشاد", phone: "72 123 456" },
-                    { city: "قابس", address: "شارع 2 مارس", phone: "75 123 456" },
-                    { city: "القيروان", address: "شارع ابن خلدون", phone: "77 123 456" },
-                  ].map((center, i) => (
-                    <div key={i} className="p-4 border border-slate-200 dark:border-slate-800 rounded-xl text-center hover:shadow-md transition">
-                      <MapPin className="h-5 w-5 mx-auto text-blue-500 mb-2" />
-                      <p className="font-bold">{center.city}</p>
-                      <p className="text-xs text-slate-500 mt-1">{center.address}</p>
-                      <p className="text-xs text-blue-600 mt-1">{center.phone}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {tunisCities.map((city, i) => (
+                    <div key={i} className="p-4 border border-slate-100 dark:border-slate-800 rounded-xl hover:shadow-md hover:border-emerald-200 transition-all group">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 font-bold text-xs">
+                          {city.code}
+                        </div>
+                        <h3 className="font-bold text-base text-gray-800 dark:text-gray-200">{city.name}</h3>
+                      </div>
+                      <div className="space-y-1 mt-3">
+                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                          <MapPin className="h-3 w-3" /> {city.address}
+                        </p>
+                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                          <Phone className="h-3 w-3" /> {city.phone}
+                        </p>
+                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                          <Mail className="h-3 w-3" /> {city.email}
+                        </p>
+                      </div>
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* تذكير مهم */}
-            <Card className="border-2 border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
-              <CardContent className="p-6 text-center">
-                <AlertCircle className="h-10 w-10 text-amber-600 mx-auto mb-3" />
-                <h3 className="font-bold text-lg mb-2">⚠️ تذكير مهم</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                  المعلومات الواردة في هذه الصفحة هي للإرشاد فقط. للاطلاع على النصوص القانونية الأصلية، يرجى الرجوع إلى موقع التشريع التونسي أو استشارة مختص في القانون.
-                </p>
-                <div className="flex justify-center gap-3 mt-4">
-                  <Badge className="bg-amber-100 text-amber-700">آخر تحديث: ماي 2026</Badge>
-                  <Badge variant="outline">المصدر: القانون التونسي</Badge>
                 </div>
               </CardContent>
             </Card>

@@ -78,7 +78,7 @@ const About = () => {
             <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-blue-400 rounded-[4rem] blur-2xl opacity-10 group-hover:opacity-20 transition duration-1000"></div>
             <div className="relative h-[300px] md:h-[550px] rounded-[3.5rem] overflow-hidden shadow-2xl border-8 border-white dark:border-slate-900">
               <Image
-                src="/AboutUs2.png"
+                src="/all.png"
                 alt="فريق خدّمني والكفاءات التونسية"
                 fill
                 className="object-cover transition duration-700 group-hover:scale-105"

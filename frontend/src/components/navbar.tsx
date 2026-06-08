@@ -2,21 +2,20 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { 
   Menu, 
   X, 
-  BriefcaseBusiness, 
   User as UserIcon, 
   LogOut,
   ChevronDown,
   Scale,
   Megaphone,
-  GraduationCap,
   Home,
   Briefcase,
   Wrench,
   BookOpen,
-  Newspaper
+  Rocket  
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { ModeToggle } from "./mode-toggle";
@@ -40,7 +39,9 @@ const Navbar = () => {
     { name: "عروض شغل", href: "/jobs", icon: <Briefcase className="h-4 w-4 ml-1" /> },
     { name: "مهن حرة", href: "/freelance", icon: <Wrench className="h-4 w-4 ml-1" /> },
     { name: "موارد وقوانين", href: "/resources", icon: <Scale className="h-4 w-4 ml-1" /> },
-{ name: "مستجدات الوظيفية العمومية", href: "/career-news", icon: <Megaphone className="h-4 w-4 ml-1" /> },    { name: "احنا شكون", href: "/about", icon: <BookOpen className="h-4 w-4 ml-1" /> },
+    { name: "مستجدات الوظيفية", href: "/career-news", icon: <Megaphone className="h-4 w-4 ml-1" /> },
+    { name: "باش تبدأ مشروعك", href: "/startup", icon: <Rocket className="h-4 w-4 ml-1" /> },
+    { name: "احنا شكون", href: "/about", icon: <BookOpen className="h-4 w-4 ml-1" /> },
   ];
 
   const handleLogout = () => {
@@ -59,13 +60,19 @@ const Navbar = () => {
           
           {/* Logo & Navigation Desktop */}
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2 shrink-0 group">
-              <div className="bg-blue-600 p-1.5 rounded-xl shadow-md group-hover:scale-110 transition-transform duration-300">
-                <BriefcaseBusiness className="text-white" size={20} />
+            {/* Logo - ثابت ولا يتغير */}
+            <Link href="/" className="flex items-center justify-center shrink-0 group">
+              <div className="relative w-31 h-30 rounded-xl overflow-hidden group-hover:scale-110 transition-all duration-300">
+                <Image
+                  src="/logo.png"
+                  alt="5AODEMNI"
+                  fill
+                  className="object-contain"
+                  sizes="800px"
+                  priority
+                  unoptimized
+                />
               </div>
-              <span className="text-2xl font-black text-slate-900 dark:text-white font-sans tracking-tighter">
-                5addem<span className="text-blue-600">ni</span>
-              </span>
             </Link>
 
             {/* Navigation Links Desktop */}
